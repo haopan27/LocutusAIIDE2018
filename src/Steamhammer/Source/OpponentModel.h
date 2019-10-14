@@ -4,7 +4,7 @@
 #include "GameRecord.h"
 #include "OpponentPlan.h"
 
-namespace UAlbertaBot
+namespace DaQinBot
 {
     enum class PylonHarassBehaviour
     {
@@ -81,7 +81,6 @@ namespace UAlbertaBot
 		std::map<std::string, double> getStrategyWeightFactors() const;
 
 		bool getRecommendGasSteal() const { return _recommendGasSteal; };
-		void setRecommendGasSteal(bool recommendGasSteal) { _recommendGasSteal = recommendGasSteal; };
 		const std::string & getRecommendedOpening() const { return _recommendedOpening; };
 
 		bool expectAirTechSoon();

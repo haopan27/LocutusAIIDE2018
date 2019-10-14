@@ -6,7 +6,7 @@
 #include "InformationManager.h"
 #include "Micro.h"
 
-namespace UAlbertaBot
+namespace DaQinBot
 {
 
 class MicroManager
@@ -31,9 +31,35 @@ protected:
 
 	void				useShieldBattery(BWAPI::Unit unit, BWAPI::Unit shieldBattery);
 
+	BWAPI::Position		getFleePosition(BWAPI::Unit unit, BWAPI::Unit target);
+	BWAPI::Position		getFleePosition(BWAPI::Position form, BWAPI::Position to, int dist);
+
+	BWAPI::Position		cutFleeFrom(BWAPI::Unit unit, BWAPI::Position to, int distance = 8 * 32);
+
 	void                drawOrderText();
 
+	int					getMarkTargetScore(BWAPI::Unit target, int score);
+	void				setMarkTargetScore(BWAPI::Unit unit, BWAPI::Unit target);
+
+	struct CompareTiles {
+		bool operator() (const std::pair<BWAPI::TilePosition, double>& lhs, const std::pair<BWAPI::TilePosition, double>& rhs) const {
+			return lhs.second < rhs.second;
+		}
+	};
+
+	struct CompareUnits {
+		bool operator() (const std::pair<const BWAPI::Unit*, double>& lhs, const std::pair<const BWAPI::Unit*, double>& rhs) const {
+			return lhs.second < rhs.second;
+		}
+	};
+
+	BWAPI::Position center(BWAPI::TilePosition tile)
+	{
+		return BWAPI::Position(tile) + BWAPI::Position(16, 16);
+	}
+
 public:
+	std::map<BWAPI::Unit, int>		retreatUnit;
 						MicroManager();
     virtual				~MicroManager(){}
 
@@ -45,6 +71,6 @@ public:
 	void				setOrder(const SquadOrder & inputOrder);
 	void				execute();
 	void				regroup(const BWAPI::Position & regroupPosition, const BWAPI::Unit vanguard, std::map<BWAPI::Unit, bool> & nearEnemy) const;
-
+	bool				meleeUnitShouldRetreat(BWAPI::Unit meleeUnit, const BWAPI::Unitset & targets);
 };
 }

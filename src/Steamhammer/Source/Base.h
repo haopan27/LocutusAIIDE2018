@@ -3,7 +3,7 @@
 #include "Common.h"
 #include "DistanceMap.h"
 
-namespace UAlbertaBot
+namespace DaQinBot
 {
 
 class Base
@@ -31,7 +31,6 @@ public:
     int             ownedSince;         // Frame the base last changed ownership
     int             lastScouted;        // When we have last seen this base
     bool            spiderMined;        // Do we suspect this base to have a spider mine blocking it
-    bool            requiresMineralWalkFromEnemyStartLocations; // Does this base require mineral walking for the enemy to reach it
 
 	BWAPI::Unit		getDepot() const { return resourceDepot; };
 	BWAPI::Player	getOwner() const { return owner; };

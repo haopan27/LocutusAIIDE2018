@@ -3,7 +3,7 @@
 #include <Common.h>
 #include "MicroManager.h"
 
-namespace UAlbertaBot
+namespace DaQinBot
 {
 class MicroDarkTemplar : public MicroManager
 {
@@ -15,6 +15,8 @@ private:
 public:
 
     MicroDarkTemplar();
+
+	//void			getTargets(BWAPI::Unitset & targets) const;
 
 	void            executeMicro(const BWAPI::Unitset & targets);
     BWAPI::Unit     getTarget(BWAPI::Unit unit, const BWAPI::Unitset & targets, LocutusMapGrid & enemyUnitGrid, bool squadRegrouping);

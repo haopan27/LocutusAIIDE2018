@@ -17,10 +17,11 @@
 #include "MicroMedics.h"
 #include "MicroTanks.h"
 #include "MicroTransports.h"
+#include "MicroDragoon.h"
 
 #include "MicroBunkerAttackSquad.h"
 
-namespace UAlbertaBot
+namespace DaQinBot
 {
 
 class Squad
@@ -35,10 +36,11 @@ class Squad
 	bool				_canAttackAir;
 	bool				_canAttackGround;
 	std::string         _regroupStatus;
-    bool                _currentlyRegrouping;
+	bool                _currentlyRegrouping;
 	bool				_attackAtMax;       // turns true when we are at max supply
     int                 _lastRetreatSwitch;
     bool                _lastRetreatSwitchVal;
+	int					_lastRetreatScore;//最后一次撤退的分数
     size_t              _priority;
 	
 	SquadOrder          _order;
@@ -53,6 +55,7 @@ class Squad
 	MicroMedics			_microMedics;
 	MicroTanks			_microTanks;
 	MicroTransports		_microTransports;
+	MicroDragoon		_microDragoons;
 
     CombatSimulation    sim;
 
@@ -71,8 +74,6 @@ class Squad
 
 	void			loadTransport();
 	void			stimIfNeeded();
-
-    void            updateBlockScouting();
 
 public:
 
@@ -119,7 +120,7 @@ public:
 	const bool			hasDetector()		const { return !_microDetectors.getUnits().empty(); };
 	const bool			hasCombatUnits()	const;
 	const bool			isOverlordHunterSquad() const;
-    const bool          isRegrouping() const { return _currentlyRegrouping; };
+	const bool          isRegrouping() const { return _currentlyRegrouping; };
 
     bool                hasMicroManager(const MicroManager* microManager) const;
 };

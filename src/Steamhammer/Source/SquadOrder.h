@@ -2,7 +2,7 @@
 
 #include "Common.h"
 
-namespace UAlbertaBot
+namespace DaQinBot
 {
 
 namespace SquadOrderTypes
@@ -14,11 +14,11 @@ namespace SquadOrderTypes
 		Defend,    // defend a base (automatically disbanded when enemy is gone)
 		Hold,      // hold ground, stand ready to defend until needed
 		HoldWall,  // defend the wall
-        BlockEnemyScout, // block the enemy scout
 		Load,      // load into a transport (Drop squad)
 		Drop,      // go drop on the enemy (Drop squad)
 		Harass,    // harass the enemy
 		KamikazeAttack,    // attacks the enemy with much higher aggression, ignoring air units
+		Sneak
 	};
 }
 
@@ -55,6 +55,11 @@ public:
         return _position;
     }
 
+	void setPosition(BWAPI::Position position)
+	{
+		_position = position;
+	}
+
     const int & getRadius() const
     {
         return _radius;
@@ -75,7 +80,6 @@ public:
 			case SquadOrderTypes::Defend:  return 'd';
 			case SquadOrderTypes::Hold:    return 'H';
 			case SquadOrderTypes::HoldWall:return 'W';
-			case SquadOrderTypes::BlockEnemyScout:return 'B';
 			case SquadOrderTypes::Load:    return 'L';
 			case SquadOrderTypes::Drop:    return 'D';
 			case SquadOrderTypes::Harass:  return 'S';
@@ -94,7 +98,8 @@ public:
 			_type == SquadOrderTypes::HoldWall ||
 			_type == SquadOrderTypes::Harass ||
 			_type == SquadOrderTypes::KamikazeAttack ||
-			_type == SquadOrderTypes::Drop;
+			_type == SquadOrderTypes::Drop ||
+			_type == SquadOrderTypes::Sneak;
 	}
 
 	// These orders use the regrouping mechanism to retreat when facing superior enemies.
@@ -103,6 +108,11 @@ public:
 	{
 		return
 			_type == SquadOrderTypes::Attack;
+	}
+
+	bool isHarass() const {
+		return
+			_type == SquadOrderTypes::Harass;
 	}
 
 };

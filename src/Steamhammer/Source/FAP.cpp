@@ -5,12 +5,12 @@
 #include "Logger.h"
 #include "Random.h"
 
-UAlbertaBot::FastAPproximation fap;
+DaQinBot::FastAPproximation fap;
 
 // NOTE FAP does not use UnitInfo.goneFromLastPosition. The flag is always set false
 // on a UnitInfo value which is passed in (CombatSimulation makes sure of it).
 
-namespace UAlbertaBot {
+namespace DaQinBot {
 
     FastAPproximation::FastAPproximation() {
 #ifdef FAP_DEBUG
@@ -501,7 +501,7 @@ namespace UAlbertaBot {
 
     void FastAPproximation::convertToUnitType(const FAPUnit &fu,
         BWAPI::UnitType ut) {
-        UAlbertaBot::UnitInfo ui;
+        DaQinBot::UnitInfo ui;
         ui.lastPosition = BWAPI::Position(fu.x, fu.y);
         ui.player = fu.player;
         ui.type = ut;
@@ -620,6 +620,7 @@ namespace UAlbertaBot {
         }
 
         // Override score for units where the destroy score is inappropriate
+		//对于破坏分数不合适的单位重写分数
         if (ui.type == BWAPI::UnitTypes::Protoss_Photon_Cannon)
             score = 750; // approximate at 1.5 dragoons
         else if (ui.type == BWAPI::UnitTypes::Zerg_Sunken_Colony)

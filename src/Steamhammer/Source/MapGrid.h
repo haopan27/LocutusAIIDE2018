@@ -3,7 +3,7 @@
 #include <Common.h>
 #include "MicroManager.h"
 
-namespace UAlbertaBot
+namespace DaQinBot
 {
 
 class GridCell
@@ -46,6 +46,9 @@ class MapGrid
 	void						clearGrid();
 	BWAPI::Position				getCellCenter(int x, int y);
 
+	int between(double d1, double d2, double d3);
+	int overlap(double xa1, double ya1, double xa2, double ya2, double xb1, double yb1, double xb2, double yb2);
+
 public:
 
 	// yay for singletons!
@@ -53,7 +56,9 @@ public:
 
 	void				update();
 	void				getUnits(BWAPI::Unitset & units, BWAPI::Position center, int radius, bool ourUnits, bool oppUnits);
+	void				getUnits(BWAPI::Unitset & units, BWAPI::Position topLeft, BWAPI::Position bottomRight, bool ourUnits, bool oppUnits);
 	BWAPI::Position		getLeastExplored(bool byGround);
+	BWAPI::Position		getLeastExploredInRegion(BWAPI::Position target, int* lastExplored);
 
 	GridCell & getCellByIndex(int r, int c)		{ return cells[r*cols + c]; }
 	GridCell & getCell(BWAPI::Position pos)		{ return getCellByIndex(pos.y / cellSize, pos.x / cellSize); }

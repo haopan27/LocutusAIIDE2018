@@ -1,10 +1,9 @@
 #include "MacroAct.h"
 #include "BuildingManager.h"
-#include "StrategyManager.h"
 
 #include <regex>
 
-using namespace UAlbertaBot;
+using namespace DaQinBot;
 
 MacroLocation MacroAct::getMacroLocationFromString(std::string & s)
 {
@@ -386,22 +385,7 @@ int MacroAct::supplyRequired() const
 // NOTE Because upgrades vary in price with level, this is context dependent.
 int MacroAct::mineralPrice(bool includeThen) const
 {
-    int price = 0;
-
-    // Include price of the "then" component if appropriate
-    if (includeThen && hasThen())
-    {
-        // We usually use the then clause for buildings that are time-sensitive, like
-        // getting cannons up in time to thwart a rush. But if we are building something
-        // likely to be far away, don't bother reserving the resources unless we are rushing
-        if (StrategyManager::Instance().isRushing() || (
-            getThen().getMacroLocation() != MacroLocation::Center &&
-            getThen().getMacroLocation() != MacroLocation::Proxy &&
-            getThen().getMacroLocation() != MacroLocation::HiddenTech))
-        {
-            price = getThen().mineralPrice();
-        }
-    }
+	int price = includeThen && hasThen() ? getThen().mineralPrice() : 0;
 
 	if (isCommand()) {
 		if (_macroCommandType.getType() == MacroCommandType::ExtractorTrickDrone ||
@@ -545,6 +529,9 @@ void MacroAct::setWallBuildingPosition(std::vector<std::pair<BWAPI::UnitType, BW
 // Record the units which are currently able to carry out this macro act.
 // For example, the idle barracks which can produce a marine.
 // It gives a warning if you call it for a command, which has no producer.
+//记录目前能够执行此宏操作的单位。
+//例如，闲置的兵营可以培养一名海军陆战队员。
+//如果您为命令调用它，它会发出警告，而命令没有生产者。
 void MacroAct::getCandidateProducers(std::vector<BWAPI::Unit> & candidates) const
 {
 	if (isCommand())

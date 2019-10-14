@@ -7,7 +7,7 @@
 #include "BuildOrder.h"
 #include "LocutusWall.h"
 
-namespace UAlbertaBot
+namespace DaQinBot
 {
 
 class BuildingPlacer

@@ -1,6 +1,6 @@
 #include "UnitUtil.h"
 
-using namespace UAlbertaBot;
+using namespace DaQinBot;
 
 // Building morphed from another, not constructed.
 bool UnitUtil::IsMorphedBuildingType(BWAPI::UnitType type)
@@ -58,7 +58,7 @@ bool UnitUtil::IsComingStaticDefense(BWAPI::UnitType type)
 // This is a combat unit for purposes of combat simulation.
 bool UnitUtil::IsCombatSimUnit(BWAPI::Unit unit)
 {
-	if (!IsUndetected(unit) && (!unit->isCompleted() || !unit->isPowered() || unit->getHitPoints() == 0))
+	if (!unit->isCompleted() || !unit->isPowered() || unit->getHitPoints() == 0)
 	{
 		return false;
 	}
@@ -436,25 +436,30 @@ int UnitUtil::GetWeaponDamageToWorker(BWAPI::Unit attacker)
 
 bool UnitUtil::IsUndetected(BWAPI::Unit unit)
 {
-    return (unit->isCloaked() || unit->getType().hasPermanentCloak()) && !unit->isDetected();
+	return (unit->isCloaked() || unit->getType().hasPermanentCloak()) && !unit->isDetected();
 }
 
 // All our units, whether completed or not.
+//我们所有的单位, 无论完成与否。
 int UnitUtil::GetAllUnitCount(BWAPI::UnitType type)
 {
-    int count = 0;
-    for (const auto unit : BWAPI::Broodwar->self()->getUnits())
-    {
-        if (unit->getType() == type)
-        {
-            ++count;
-        }
+	return GetAllUnitCount(type, BWAPI::Broodwar->self());
+}
 
-        // Units in the egg.
-        else if (unit->getType() == BWAPI::UnitTypes::Zerg_Egg && unit->getBuildType() == type)
-        {
-            count += type.isTwoUnitsInOneEgg() ? 2 : 1;
-        }
+int UnitUtil::GetAllUnitCount(BWAPI::UnitType type, BWAPI::Player player = BWAPI::Broodwar->self()) {
+	int count = 0;
+	for (const auto unit : player->getUnits())
+	{
+		if (unit->getType() == type)
+		{
+			++count;
+		}
+
+		// Units in the egg.
+		else if (unit->getType() == BWAPI::UnitTypes::Zerg_Egg && unit->getBuildType() == type)
+		{
+			count += type.isTwoUnitsInOneEgg() ? 2 : 1;
+		}
 
 		// Lurkers in the egg.
 		else if (unit->getType() == BWAPI::UnitTypes::Zerg_Lurker_Egg && type == BWAPI::UnitTypes::Zerg_Lurker)
@@ -468,30 +473,34 @@ int UnitUtil::GetAllUnitCount(BWAPI::UnitType type)
 			++count;
 		}
 
-        // case where a building has started constructing a unit but it doesn't yet have a unit associated with it
-        else if (unit->getRemainingTrainTime() > 0)
-        {
-            BWAPI::UnitType trainType = unit->getLastCommand().getUnitType();
+		// case where a building has started constructing a unit but it doesn't yet have a unit associated with it
+		else if (unit->getRemainingTrainTime() > 0)
+		{
+			BWAPI::UnitType trainType = unit->getLastCommand().getUnitType();
 
 			// NOTE Comparing the time like this could lead to miscounts if units start simultaneously.
-			//      But the original UAlbertaBot production system does not start units simultaneously.
-            if (trainType == type && unit->getRemainingTrainTime() == trainType.buildTime())
-            {
-                ++count;
-            }
-        }
-    }
+			//      But the original DaQinBot production system does not start units simultaneously.
+			if (trainType == type && unit->getRemainingTrainTime() == trainType.buildTime())
+			{
+				++count;
+			}
+		}
+	}
 
-    return count;
+	return count;
+}
+
+int UnitUtil::GetCompletedUnitCount(BWAPI::UnitType type) {
+	return GetCompletedUnitCount(type, BWAPI::Broodwar->self());
 }
 
 // Only our completed units.
-int UnitUtil::GetCompletedUnitCount(BWAPI::UnitType type, bool onlyPowered)
+int UnitUtil::GetCompletedUnitCount(BWAPI::UnitType type, BWAPI::Player player = BWAPI::Broodwar->self())
 {
 	int count = 0;
-	for (const auto unit : BWAPI::Broodwar->self()->getUnits())
+	for (const auto unit : player->getUnits())
 	{
-		if (unit->getType() == type && unit->isCompleted() && (!onlyPowered || !unit->getType().requiresPsi() || unit->isPowered()))
+		if (unit->getType() == type && unit->isCompleted())
 		{
 			++count;
 		}
@@ -530,7 +539,7 @@ int UnitUtil::GetUncompletedUnitCount(BWAPI::UnitType type)
 			BWAPI::UnitType trainType = unit->getLastCommand().getUnitType();
 
 			// NOTE Comparing the time like this could lead to miscounts if units start simultaneously.
-			//      But the original UAlbertaBot production system does not start units simultaneously.
+			//      But the original DaQinBot production system does not start units simultaneously.
 			if (trainType == type && unit->getRemainingTrainTime() == trainType.buildTime())
 			{
 				++count;

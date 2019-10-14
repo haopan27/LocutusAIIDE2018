@@ -5,7 +5,7 @@
 #include "MicroManager.h"
 #include "InformationManager.h"
 
-namespace UAlbertaBot
+namespace DaQinBot
 {
 enum class PylonHarassStates
 {
@@ -74,7 +74,6 @@ class ScoutManager
 	void                            moveAirScout(BWAPI::Unit scout);
 	void                            drawScoutInformation(int x, int y);
     void                            calculateEnemyRegionVertices();
-    std::vector<BWAPI::Position>    calculateScoutVerticesForBase(BWTA::BaseLocation * base);
     void                            updatePylonHarassState();
 	bool							pylonHarass();
 

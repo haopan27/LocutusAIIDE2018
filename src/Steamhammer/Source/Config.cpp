@@ -12,7 +12,7 @@ namespace Config
     {
         bool ConfigFileFound                = false;
         bool ConfigFileParsed               = false;
-        std::string ConfigFileLocation      = "bwapi-data/AI/Locutus.json";
+        std::string ConfigFileLocation      = "bwapi-data/AI/DaQin.json";
     }
 
 	namespace IO
@@ -31,7 +31,9 @@ namespace Config
         std::string TerranStrategyName      = "11Rax";					// default
         std::string ZergStrategyName        = "9PoolSpeed";				// default
         std::string StrategyName            = "9PoolSpeed";
-        bool ScoutHarassEnemy               = true;
+		int maxAttackUnits = 160;//大于此单位开始进攻
+		int minAttackUnits = 1;//小于此单位则防守
+		bool ScoutHarassEnemy = true;
 		bool AutoGasSteal                   = true;
 		double RandomGasStealRate           = 0.0;
 		bool UsePlanRecognizer				= true;
@@ -44,8 +46,8 @@ namespace Config
 
     namespace BotInfo
     {
-        std::string BotName                 = "Locutus";
-        std::string Authors                 = "Bruce Nielsen";
+        std::string BotName                 = "DaQin";
+        std::string Authors                 = "LionGIS";
         bool PrintInfoOnStart               = false;
     }
 
@@ -79,6 +81,7 @@ namespace Config
         bool DrawMouseCursorInfo            = false;
         bool DrawEnemyUnitInfo              = false;
 		bool DrawMapInfo					= false;
+		bool DrawBWTAInfo					= false;
         bool DrawMapGrid                    = false;
 		bool DrawMapDistances				= false;
 		bool DrawBaseInfo					= false;
@@ -88,7 +91,7 @@ namespace Config
         bool DrawSquadInfo                  = false;
         bool DrawBOSSStateInfo              = false;
 
-        std::string ErrorLogFilename        = "Locutus_ErrorLog.txt";
+        std::string ErrorLogFilename        = "DaQin_ErrorLog.txt";
         bool LogAssertToErrorFile           = false;
 
         bool LogDebug			            = false;

@@ -6,7 +6,7 @@
 
 //#define COMBATSIM_DEBUG 1
 
-using namespace UAlbertaBot;
+using namespace DaQinBot;
 
 CombatSimulation::CombatSimulation()
     : myVanguard(BWAPI::Positions::Invalid)
@@ -14,11 +14,14 @@ CombatSimulation::CombatSimulation()
     , enemyVanguard(BWAPI::Positions::Invalid)
     , enemyUnitsCentroid(BWAPI::Positions::Invalid)
     , airBattle(false)
+    , enemyZerglings(0)
 {
 }
 
 // sets the starting states based on the combat units within a radius of a given position
 // this center will most likely be the position of the forwardmost combat unit we control
+//在给定位置的半径范围内，根据战斗单位设置起始状态
+//这个中心很可能是我们控制的最先进的作战单位的位置
 void CombatSimulation::setCombatUnits(BWAPI::Position _myVanguard, BWAPI::Position _enemyVanguard, int radius, bool visibleOnly, bool ignoreBunkers)
 {
     fap.clearState();
@@ -26,11 +29,8 @@ void CombatSimulation::setCombatUnits(BWAPI::Position _myVanguard, BWAPI::Positi
     myUnitsCentroid = BWAPI::Positions::Invalid;
     enemyVanguard = _enemyVanguard;
     enemyUnitsCentroid = BWAPI::Positions::Invalid;
+    enemyZerglings = 0;
     airBattle = false;
-
-    // We are pessimistic and assume for combat sim purposes that the enemy can see all of our
-    // cloaked units if they have any detectors in the sim
-    bool enemyHasDetection = false;
 
     std::vector<UnitInfo> enemyUnits;
 
@@ -47,7 +47,7 @@ void CombatSimulation::setCombatUnits(BWAPI::Position _myVanguard, BWAPI::Positi
             if (ignoreBunkers && unit->getType() == BWAPI::UnitTypes::Terran_Bunker) continue;
             if (rushing && unit->getType().isFlyer()) continue;
 
-			if (UnitUtil::IsCombatSimUnit(unit))
+			if (unit->getHitPoints() > 0 && UnitUtil::IsCombatSimUnit(unit))
 			{
                 enemyUnits.push_back(unit);
 				if (Config::Debug::DrawCombatSimulationInfo)
@@ -83,6 +83,8 @@ void CombatSimulation::setCombatUnits(BWAPI::Position _myVanguard, BWAPI::Positi
 	{
 		// All known enemy units, according to their most recently seen position.
 		// Skip if goneFromLastPosition, which means the last position was seen and the unit wasn't there.
+		//所有已知的敌人单位，根据他们最近看到的位置。
+		// if goneFromLastPosition，意思是最后一个位置被看到了，单位不在那里。
 		std::vector<UnitInfo> enemyCombatUnits;
 		InformationManager::Instance().getNearbyForce(enemyCombatUnits, enemyVanguard, BWAPI::Broodwar->enemy(), radius);
 		for (const UnitInfo & ui : enemyCombatUnits)
@@ -91,6 +93,7 @@ void CombatSimulation::setCombatUnits(BWAPI::Position _myVanguard, BWAPI::Positi
             if (rushing && ui.type.isFlyer()) continue;
 
             // The check is careful about seen units and assumes that unseen units are powered.
+			//检查是对可见单元的仔细检查，并假定不可见单元是有动力的。
 			if (ui.lastHealth > 0 &&
 				(ui.unit->exists() || ui.lastPosition.isValid() && !ui.goneFromLastPosition) &&
                 (ui.completed || ui.estimatedCompletionFrame < BWAPI::Broodwar->getFrameCount()) &&
@@ -124,7 +127,7 @@ void CombatSimulation::setCombatUnits(BWAPI::Position _myVanguard, BWAPI::Positi
 
             fap.addIfCombatUnitPlayer2(unit);
             enemyUnitsCentroid += unit.lastPosition;
-            if (unit.type.isDetector()) enemyHasDetection = true;
+            if (unit.type == BWAPI::UnitTypes::Zerg_Zergling) enemyZerglings++;
         }
 
         enemyUnitsCentroid /= enemyUnits.size();
@@ -160,9 +163,8 @@ void CombatSimulation::setCombatUnits(BWAPI::Position _myVanguard, BWAPI::Positi
 #ifdef COMBATSIM_DEBUG
             debug << "\n" << unit->getType() << " @ " << unit->getTilePosition();
 #endif
-            FastAPproximation::FAPUnit fapUnit(unit);
-            fapUnit.undetected = fapUnit.undetected && !enemyHasDetection;
-            fap.addIfCombatUnitPlayer1(fapUnit);
+
+            fap.addIfCombatUnitPlayer1(unit);
             myUnitsCentroid += unit->getPosition();
 
             if (unit->isFlying()) airBattle = true;
@@ -203,6 +205,15 @@ std::pair<int, int> CombatSimulation::simulate(int frames, bool narrowChoke, int
         }
     }
 
+    // If the enemy army consists of many zerglings, assume they won't be as effective
+    // FAP has trouble simming them as it allows units to stack
+    if (enemyZerglings > 10)
+    {
+        // Scales from 1.0 at 10 zerglings to 0.5 at 25 zerglings
+        double factor = std::min(0.5, 1.0 - (double)(enemyZerglings - 10) / 30.0);
+        ourChange = (int)std::ceil((double)ourChange * factor);
+    }
+
     return std::make_pair(ourChange, theirChange);
 }
 
@@ -217,6 +228,8 @@ int CombatSimulation::simulateCombat(bool currentlyRetreating)
 
     // Analyze the ground geography if we know where the armies are located
     // Doesn't apply to rushes: zealots don't have as many problems with chokes, and FAP will simulate elevation
+	//如果我们知道军队的位置，就分析地面地理
+	//不适用于灯芯草:狂热者在窒息方面没有那么多问题，FAP将模拟海拔
     bool narrowChoke = false;
     int elevationDifference = 0;
     if (myUnitsCentroid.isValid() && enemyVanguard.isValid() && !airBattle && !rushing)
@@ -234,6 +247,7 @@ int CombatSimulation::simulateCombat(bool currentlyRetreating)
         }
 
         // Is there an elevation difference?
+		//有海拔差异吗?
         elevationDifference = BWAPI::Broodwar->getGroundHeight(BWAPI::TilePosition(enemyVanguard))
             - BWAPI::Broodwar->getGroundHeight(BWAPI::TilePosition(myUnitsCentroid));
 #ifdef COMBATSIM_DEBUG
@@ -249,12 +263,14 @@ int CombatSimulation::simulateCombat(bool currentlyRetreating)
     }
 
 #ifdef COMBATSIM_DEBUG
+    if (enemyZerglings > 10) debug << "\nEnemy army consists of " << enemyZerglings << " zerglings; decreasing its expected efficiency";
     debug << "\nInitial values: ours " << fap.playerScores().first << " theirs " << fap.playerScores().second;
 #endif
 
     std::pair<int, int> initial = fap.playerScores();
 
     // Sim six seconds into the future, one second at a time
+	//在未来六秒内，一次一秒
     std::pair<int, int> result;
     for (int step = 1; step <= 6; step++)
     {
@@ -268,6 +284,10 @@ int CombatSimulation::simulateCombat(bool currentlyRetreating)
         // - our army is bigger
         // - our losses are insignificant
         // - the gain is more significant than our loss
+		//如果我们在3秒或3秒以上后投射增益，我们会短路:
+		// -我们的军队更大
+		// -我们的损失微不足道
+		// -得到比失去更重要
         if (step >= 3 && result.second > result.first && 
             (fap.playerScores().first >= fap.playerScores().second || 
                 fap.playerScores().first >= (initial.first - 50) ||
@@ -281,6 +301,7 @@ int CombatSimulation::simulateCombat(bool currentlyRetreating)
         }
 
         // While rushing, we are more aggressive
+		//在匆忙中，我们更有侵略性
         if (step >= 3 && rushing && 
             (fap.playerScores().first >= 300 || (!currentlyRetreating && fap.playerScores().first >= 100)) &&
             (double)(fap.playerScores().second - initial.second) / (double)(fap.playerScores().first - initial.first) > 0.5)
@@ -304,9 +325,10 @@ int CombatSimulation::simulateCombat(bool currentlyRetreating)
     }
 
     // At this point we project either a loss or a risky gain, otherwise we would have returned earlier
-
+	//在这一点上，我们要么预测损失，要么预测风险收益，否则我们会更早返回
     // Press the attack if our army outnumbers theirs by a good margin
-    if ((double)fap.playerScores().second / (double)fap.playerScores().first < 0.6)
+	//如果我军的人数远远超过他们的，就加紧进攻
+    if ((double)fap.playerScores().second / (double)fap.playerScores().first < 0.5)
     {
 #ifdef COMBATSIM_DEBUG
         debug << "\nTheir army is significantly smaller than ours; pressing the attack";
@@ -318,6 +340,9 @@ int CombatSimulation::simulateCombat(bool currentlyRetreating)
     // Attack if we're doing better than the enemy as a percentage of army size
     // If we have the bigger army, we lost a bit more value than the enemy, but their army will be gone soon
     // If we have the smaller army, we're fighting much more cost-effectively
+	//如果我们在军队规模上比敌人做得好，那就发动攻击
+	//如果我们有更大的军队，我们损失的比敌人多一点，但他们的军队很快就会消失
+	//如果我们的军队规模小一些，我们的作战成本就会高得多
     double ourPercentageChange = (double)result.first / (double)initial.first;
     double theirPercentageChange = (double)result.second / (double)initial.second;
 #ifdef COMBATSIM_DEBUG
@@ -332,6 +357,7 @@ int CombatSimulation::simulateCombat(bool currentlyRetreating)
     }
 
     // Otherwise, we found no result to indicate an attack being worthwhile
+	//否则，我们没有发现任何结果表明攻击是值得的
 #ifdef COMBATSIM_DEBUG
     Log().Debug() << debug.str();
 #endif

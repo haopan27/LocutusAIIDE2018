@@ -1,8 +1,7 @@
 #include "Common.h"
 #include "MapGrid.h"
-#include "UnitUtil.h"
 
-using namespace UAlbertaBot;
+using namespace DaQinBot;
 
 MapGrid & MapGrid::Instance() 
 {
@@ -73,6 +72,38 @@ BWAPI::Position MapGrid::getLeastExplored(bool byGround)
 	}
 
 	return getCellCenter(leastRow, leastCol);
+}
+
+BWAPI::Position MapGrid::getLeastExploredInRegion(BWAPI::Position target, int* lastExplored)
+{
+	auto region = BWTA::getRegion(target);
+
+	int minSeen = INT_MAX;
+	int minSeenDist = 0;
+	BWAPI::Position minPos = BWAPI::Positions::Invalid;
+
+	for (int r = 0; r<rows; ++r)
+	{
+		for (int c = 0; c<cols; ++c)
+		{
+			// get the center of this cell
+			BWAPI::Position cellCenter = getCellCenter(r, c);
+			if (BWTA::getRegion(cellCenter) != region) continue;
+
+			int dist = target.getApproxDistance(getCellByIndex(r, c).center);
+			int lastVisited = getCellByIndex(r, c).timeLastVisited;
+			if (lastVisited < minSeen || ((lastVisited == minSeen) && (dist > minSeenDist)))
+			{
+				minPos = cellCenter;
+				minSeen = lastVisited;
+				minSeenDist = dist;
+			}
+		}
+	}
+
+	if (lastExplored) *lastExplored = minSeen;
+
+	return minPos;
 }
 
 void MapGrid::calculateCellCenters()
@@ -186,7 +217,7 @@ void MapGrid::update()
 	{
 		if (unit->exists() &&
 			(unit->isCompleted() || unit->getType().isBuilding()) &&
-			(unit->getHitPoints() > 0 || UnitUtil::IsUndetected(unit)) &&
+			unit->getHitPoints() > 0 &&
 			unit->getType() != BWAPI::UnitTypes::Unknown) 
 		{
 			getCell(unit).oppUnits.insert(unit);
@@ -240,6 +271,135 @@ void MapGrid::getUnits(BWAPI::Unitset & units, BWAPI::Position center, int radiu
 			}
 		}
 	}
+}
+
+void MapGrid::getUnits(BWAPI::Unitset & units, BWAPI::Position topLeft, BWAPI::Position bottomRight, bool ourUnits, bool oppUnits)
+{
+	const int x0(std::max(topLeft.x / cellSize, 0));
+	const int x1(std::min(bottomRight.x / cellSize, cols - 1));
+	const int y0(std::max(topLeft.y / cellSize, 0));
+	const int y1(std::min(bottomRight.y / cellSize, rows - 1));
+
+	const int tx0 = topLeft.x;
+	const int tx1 = bottomRight.x;
+	const int ty0 = topLeft.y;
+	const int ty1 = bottomRight.y;
+	//const int radiusSq(radius * radius);
+
+	for (int y(y0); y <= y1; ++y)
+	{
+		for (int x(x0); x <= x1; ++x)
+		{
+			int row = y;
+			int col = x;
+
+			const GridCell & cell(getCellByIndex(row, col));
+			if (ourUnits)
+			{
+				for (const auto unit : cell.ourUnits)
+				{
+					BWAPI::Position u1 = unit->getPosition();
+					BWAPI::Position u2(u1.x + unit->getType().tileWidth(), u1.y + unit->getType().tileHeight());
+
+					const int ux0 = u1.x;
+					const int ux1 = u2.x;
+					const int uy0 = u1.y;
+					const int uy1 = u2.y;
+
+					if (overlap(ux0, uy0, ux1, uy1, tx0, ty0, tx1, ty1))
+					{
+						if (!units.contains(unit))
+						{
+							units.insert(unit);
+						}
+					}
+				}
+			}
+
+			if (oppUnits)
+			{
+				for (const auto unit : cell.oppUnits) if (unit->getType() != BWAPI::UnitTypes::Unknown)
+				{
+					BWAPI::Position u1 = unit->getPosition();
+					BWAPI::Position u2(u1.x + unit->getType().tileWidth(), u1.y + unit->getType().tileHeight());
+
+					const int ux0 = u1.x;
+					const int ux1 = u2.x;
+					const int uy0 = u1.y;
+					const int uy1 = u2.y;
+
+					if (overlap(ux0, uy0, ux1, uy1, tx0, ty0, tx1, ty1))
+					{
+						if (!units.contains(unit))
+						{
+							units.insert(unit);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+int MapGrid::between(double d1, double d2, double d3)
+{
+	if (d1 < d2) {
+		return (d1 <= d3 && d3 <= d2);
+	}
+	else {
+		return (d2 <= d3 && d3 <= d1);
+	}
+
+	return 0;
+}
+
+int MapGrid::overlap(double xa1, double ya1, double xa2, double ya2, double xb1, double yb1, double xb2, double yb2)
+{
+	/* 1 */
+
+	if (between(xa1, xa2, xb1) && between(ya1, ya2, yb1))
+
+		return 1;
+
+	if (between(xa1, xa2, xb2) && between(ya1, ya2, yb2))
+
+		return 1;
+
+	if (between(xa1, xa2, xb1) && between(ya1, ya2, yb2))
+
+		return 1;
+
+	if (between(xa1, xa2, xb2) && between(ya1, ya2, yb1))
+
+		return 1;
+
+	/* 2 */
+
+	if (between(xb1, xb2, xa1) && between(yb1, yb2, ya1))
+
+		return 1;
+
+	if (between(xb1, xb2, xa2) && between(yb1, yb2, ya2))
+
+		return 1;
+
+	/* 3 */
+
+	if ((between(ya1, ya2, yb1) && between(ya1, ya2, yb2))
+
+		&& (between(xb1, xb2, xa1) && between(xb1, xb2, xa2)))
+
+		return 1;
+
+	/* 4 */
+
+	if ((between(xa1, xa2, xb1) && between(xa1, xa2, xb2))
+
+		&& (between(yb1, yb2, ya1) && between(yb1, yb2, ya2)))
+
+		return 1;
+
+	return 0;
 }
 
 // The bot scanned the given position. Record it so we don't scan the same position

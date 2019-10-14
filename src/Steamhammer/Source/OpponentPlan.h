@@ -2,7 +2,7 @@
 
 #include "Common.h"
 
-namespace UAlbertaBot
+namespace DaQinBot
 {
 
 enum class OpeningPlan
@@ -10,6 +10,7 @@ enum class OpeningPlan
 	, Proxy			// proxy building
 	, WorkerRush	// early like Stone, late like one Tscmoo version
 	, FastRush		// a cheese rush faster than 9 pool/8 rax/9 gate
+	, DKRush
     , NotFastRush   // when we know it isn't a proxy, worker rush, or fast rush
 	, HeavyRush		// 2 hatcheries pool only, 2 barracks no gas, 2 gates no gas
     , HydraBust     // 3 or more hatcheries, hydras, early game
@@ -17,8 +18,6 @@ enum class OpeningPlan
 	, SafeExpand	// defended fast expansion, with bunker or cannons
 	, NakedExpand	// undefended fast expansion (usual for zerg, bold for others)
 	, Turtle		// cannons/bunker/sunkens thought to be on 1 base
-    , DarkTemplar   // dark templar opening
-    , WallIn        // terran wall-in
 	, Size
 	};
 
@@ -28,15 +27,14 @@ const std::vector< std::pair<OpeningPlan, std::string> > PlanNames =
 	std::pair<OpeningPlan, std::string>(OpeningPlan::Proxy, "Proxy"),
 	std::pair<OpeningPlan, std::string>(OpeningPlan::WorkerRush, "Worker rush"),
 	std::pair<OpeningPlan, std::string>(OpeningPlan::FastRush, "Fast rush"),
+	std::pair<OpeningPlan, std::string>(OpeningPlan::DKRush, "DarkTemplar rush"),
 	std::pair<OpeningPlan, std::string>(OpeningPlan::NotFastRush, "Not fast rush"),
 	std::pair<OpeningPlan, std::string>(OpeningPlan::HeavyRush, "Heavy rush"),
 	std::pair<OpeningPlan, std::string>(OpeningPlan::HydraBust, "Hydra bust"),
 	std::pair<OpeningPlan, std::string>(OpeningPlan::Factory, "Factory"),
 	std::pair<OpeningPlan, std::string>(OpeningPlan::SafeExpand, "Safe expand"),
 	std::pair<OpeningPlan, std::string>(OpeningPlan::NakedExpand, "Naked expand"),
-	std::pair<OpeningPlan, std::string>(OpeningPlan::Turtle, "Turtle"),
-	std::pair<OpeningPlan, std::string>(OpeningPlan::DarkTemplar, "Dark templar"),
-	std::pair<OpeningPlan, std::string>(OpeningPlan::WallIn, "Wall-in")
+	std::pair<OpeningPlan, std::string>(OpeningPlan::Turtle, "Turtle")
 };
 
 // Turn an opening plan into a string.

@@ -3,17 +3,20 @@
 #include <Common.h>
 #include "MicroManager.h"
 
-namespace UAlbertaBot
+namespace DaQinBot
 {
 class MicroHighTemplar : public MicroManager
 {
-private:
-    void merge(BWAPI::Unit first, BWAPI::Unit second);
-
 public:
 
 	MicroHighTemplar();
+	void getTargets(BWAPI::Unitset & targets) const;
 	void executeMicro(const BWAPI::Unitset & targets);
-	void update();
+	void assignTargets(const BWAPI::Unitset & targets);
+
+	int getAttackPriority(BWAPI::Unit attacker, BWAPI::Unit unit) const;
+	BWAPI::Unit getTarget(BWAPI::Unit meleeUnit, const BWAPI::Unitset & targets);
+
+	void update(const BWAPI::Position & center);
 };
 }

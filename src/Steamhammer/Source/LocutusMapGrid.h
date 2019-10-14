@@ -4,7 +4,7 @@
 
 //#define GRID_DEBUG 1
 
-namespace UAlbertaBot
+namespace DaQinBot
 {
 
 class LocutusMapGrid

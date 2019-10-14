@@ -7,9 +7,8 @@
 #include "UnitData.h"
 #include "LocutusUnit.h"
 #include "LocutusMapGrid.h"
-#include "UpgradeTracker.h"
 
-namespace UAlbertaBot
+namespace DaQinBot
 {
 class InformationManager 
 {
@@ -19,6 +18,9 @@ class InformationManager
 	std::string		_enemyName;
 
 	bool			_enemyProxy;
+	BWAPI::Position _enemyProxyPosition;
+
+	bool			_sneakTooLate;
 
 	bool			_weHaveCombatUnits;
 	bool			_enemyHasCombatUnits;
@@ -36,10 +38,23 @@ class InformationManager
     bool            _enemyHasSiegeTech;
     bool            _enemyHasInfantryRangeUpgrade;
 
+	std::vector<BWAPI::Position> _myRegionVertices;
+
+	int				_psionicStormFrame = 0;//闪电完成时间
+
+	double			_enemyFightScore = 0;//敌人的战斗力总和
+	double			_selfFightScore = 0;//我方的战斗力总和
+
+	const int						SIEGE_THREASHOLD = 1000;
+
+	std::map<BWAPI::Unit, int> _attackDamages;//攻击目标对它的伤害值
+	std::map<BWAPI::Unit, int> _attackNumbers;//攻击目标对它的数量
+
 	std::map<BWAPI::Player, UnitData>                   _unitData;
 	std::map<BWAPI::Player, BWTA::BaseLocation *>       _mainBaseLocations;
 	BWTA::BaseLocation *								_myNaturalBaseLocation;  // whether taken yet or not; may be null
-	BWTA::BaseLocation *								_enemyNaturalBaseLocation;  // null until we know the enemy main (and on some maps also afterwards)
+	BWTA::BaseLocation *								_enemyNaturalBaseLocation;
+	BWTA::BaseLocation *								_enemyNextLocation;
 	std::map<BWAPI::Player, std::set<BWTA::Region *> >  _occupiedRegions;        // contains any building
 	std::map<BWTA::BaseLocation *, Base *>				_theBases;
 	BWAPI::Unitset										_staticDefense;
@@ -48,9 +63,7 @@ class InformationManager
 
     std::map<BWAPI::Unit, LocutusUnit>  _myUnits;
     LocutusMapGrid                      _myUnitGrid;
-    LocutusMapGrid                      _enemyUnitGrid;
-
-    std::map<BWAPI::Player, UpgradeTracker> _upgradeTrackers;
+	LocutusMapGrid                      _enemyUnitGrid;
 
     std::map<BWAPI::Bullet, int>    bulletFrames;   // All interesting bullets we've seen and the frame we first saw them on
     int                             bulletsSeenAtExtendedMarineRange;
@@ -60,11 +73,18 @@ class InformationManager
     // Second set in the pair: all tiles behind or part of the wall.
     std::map<const BWEM::ChokePoint*, std::pair<std::set<BWAPI::TilePosition>, std::set<BWAPI::TilePosition>>> enemyWalls;
 
+    // Caches of enemy unit statistics, used to track upgrades
+    std::map<BWAPI::WeaponType, int> enemyWeaponDamage;
+    std::map<BWAPI::WeaponType, int> enemyWeaponRange;
+    std::map<BWAPI::UnitType, int> enemyUnitCooldown;
+    std::map<BWAPI::UnitType, double> enemyUnitTopSpeed;
+    std::map<BWAPI::UnitType, int> enemyUnitArmor;
+
 	InformationManager();
 
 	void					initializeTheBases();
 	void                    initializeRegionInformation();
-	BWTA::BaseLocation *	getNaturalBase(BWTA::BaseLocation * main);
+	void					initializeNaturalBase();
 
 	int                     getIndex(BWAPI::Player player) const;
 
@@ -91,15 +111,13 @@ class InformationManager
     void                    detectEnemyWall(BWAPI::Unit unit);
     void                    detectBrokenEnemyWall(BWAPI::UnitType type, BWAPI::TilePosition tile);
 
-    UpgradeTracker&         getUpgradeTracker(BWAPI::Player player);
-
 public:
 
     void                    update();
 
     // event driven stuff
 	void					onUnitShow(BWAPI::Unit unit)        { updateUnit(unit); maybeAddBase(unit); }
-    void					onUnitHide(BWAPI::Unit unit)        { updateUnit(unit); }
+	void					onUnitHide(BWAPI::Unit unit)        { updateUnit(unit); removeAttackDamages(unit); removeAttackNumbers(unit); }
 	void					onUnitCreate(BWAPI::Unit unit)		{ updateUnit(unit); maybeAddBase(unit); }
 	void					onUnitComplete(BWAPI::Unit unit)    { updateUnit(unit); maybeAddStaticDefense(unit); }
 	void					onUnitMorph(BWAPI::Unit unit)       { updateUnit(unit); maybeAddBase(unit); }
@@ -111,33 +129,38 @@ public:
 
 	bool					isEnemyBuildingInRegion(BWTA::Region * region, bool ignoreRefineries);
 	bool					isEnemyBuildingNearby(BWAPI::Position position, int threshold);
+	bool					isEnemyUnitNearby(BWAPI::Position position, int threshold);
     int						getNumUnits(BWAPI::UnitType type,BWAPI::Player player) const;
     bool					nearbyForceHasCloaked(BWAPI::Position p,BWAPI::Player player,int radius);
 
     void                    getNearbyForce(std::vector<UnitInfo> & unitInfo,BWAPI::Position p,BWAPI::Player player,int radius);
 
-    bool                    enemyHasWall() const { return !enemyWalls.empty(); }
     bool                    isEnemyWallBuilding(BWAPI::Unit unit);
     bool                    isBehindEnemyWall(BWAPI::Unit attacker, BWAPI::Unit target);
     bool                    isBehindEnemyWall(BWAPI::TilePosition tile);
 
     const UIMap &           getUnitInfo(BWAPI::Player player) const;
 
+	const UnitData &        getUnitData(BWAPI::Player player) const;
+	BWAPI::Unitset			getUnits(BWAPI::Player player, BWAPI::UnitType type);
+
 	std::set<BWTA::Region *> &  getOccupiedRegions(BWAPI::Player player);
 
     BWTA::BaseLocation *    getMainBaseLocation(BWAPI::Player player);
 	BWTA::BaseLocation *	getMyMainBaseLocation();
 	BWTA::BaseLocation *	getEnemyMainBaseLocation();
+	BWTA::BaseLocation *	getEnemyNaturalLocation();
+	const BWTA::BaseLocation *	getEnemyNextLocation();//获取敌人下一个发展的基地
 	const BWEB::Station *	getEnemyMainBaseStation();
 	BWAPI::Player			getBaseOwner(BWTA::BaseLocation * base);
 	int         			getBaseOwnedSince(BWTA::BaseLocation * base);
 	int         			getBaseLastScouted(BWTA::BaseLocation * base);
 	BWAPI::Unit 			getBaseDepot(BWTA::BaseLocation * base);
 	BWTA::BaseLocation *	getMyNaturalLocation();
-	BWTA::BaseLocation *	getEnemyNaturalLocation();
     std::vector<BWTA::BaseLocation *> getBases(BWAPI::Player player);
     std::vector<BWTA::BaseLocation *> getMyBases() { return getBases(BWAPI::Broodwar->self()); }
     std::vector<BWTA::BaseLocation *> getEnemyBases() { return getBases(BWAPI::Broodwar->enemy()); }
+	//std::vector<BWTA::BaseLocation *> getEnemyNextBaseLocations();
     Base*					getBase(BWTA::BaseLocation * base) { return _theBases[base]; };
     Base*					baseAt(BWAPI::TilePosition baseTilePosition);
     int						getTotalNumBases() const;
@@ -147,14 +170,14 @@ public:
 	int						getMyNumGeysers();
 	void					getMyGasCounts(int & nRefineries, int & nFreeGeysers);
 
-    bool                    haveWeTakenOurNatural();
-
 	bool					getEnemyProxy() { return _enemyProxy; };
+	BWAPI::Position			getEnemyProxyPosition() { return _enemyProxyPosition; };
 
 	void					maybeChooseNewMainBase();
 
 	int						getAir2GroundSupply(BWAPI::Player player) const;
 
+	bool                    haveWeTakenOurNatural();
 	bool					weHaveCombatUnits();
 
 	bool					enemyHasCombatUnits();
@@ -192,17 +215,42 @@ public:
     void                    drawMapInformation();
 	void					drawBaseInformation(int x, int y);
 
-    const UnitData &        getUnitData(BWAPI::Player player) const;
-
     std::string             getEnemyName() const { return _enemyName; }
 
     BWAPI::Position         predictUnitPosition(BWAPI::Unit unit, int frames) const;
 
     LocutusUnit&            getLocutusUnit(BWAPI::Unit unit);
     LocutusMapGrid&         getMyUnitGrid() { return _myUnitGrid; };
-    LocutusMapGrid&         getEnemyUnitGrid() { return _enemyUnitGrid; };
-    LocutusMapGrid&         getUnitGrid(BWAPI::Player player) { return player == BWAPI::Broodwar->self() ? _myUnitGrid : _enemyUnitGrid; };
+	LocutusMapGrid&         getEnemyUnitGrid() { return _enemyUnitGrid; };
+	LocutusMapGrid&         getUnitGrid(BWAPI::Player player) { return player == BWAPI::Broodwar->self() ? _myUnitGrid : _enemyUnitGrid; };
 
+	void					setAttackDamages(BWAPI::Unit unit, int damage) { _attackDamages[unit] += damage; };
+	int						getAttackDamages(BWAPI::Unit unit) { if (_attackDamages[unit]) { return _attackDamages[unit]; } else { return 0; } };
+	void					clearAttackDamages() { _attackDamages.clear(); }
+	void					removeAttackDamages(BWAPI::Unit unit) { if (_attackDamages[unit]) { _attackDamages.erase(unit); } }
+
+	void					setAttackNumbers(BWAPI::Unit unit, int number) { _attackNumbers[unit] += number; };
+	int						getAttackNumbers(BWAPI::Unit unit) { if (_attackNumbers[unit]) { return _attackNumbers[unit]; } else { return 0; } };
+	void					clearAttackNumbers() { _attackNumbers.clear(); }
+	void					removeAttackNumbers(BWAPI::Unit unit) { if (_attackNumbers[unit]) { _attackNumbers.erase(unit); } }
+
+	const int				getPlayerLost(BWAPI::Player player) { return _unitData[player].getMineralsLost() + _unitData[player].getGasLost(); };
+	void					setPlayerLost(BWAPI::Player player, int mineralsLost = 0, int gasLost = 0) { _unitData[player].setMineralsLost(mineralsLost); _unitData[player].setGasLost(gasLost); }
+
+	int						getPsionicStormFrame() { return _psionicStormFrame; };//获取闪电升级完成时间
+	void					setPsionicStormFrame(int frame) { _psionicStormFrame = frame; };
+
+	const double 			getEnemyFightScore() const { return _enemyFightScore; };
+	const double 			getSelfFightScore() const { return _selfFightScore; };
+
+	double					getFightScoreTimes();//获取战斗分数
+
+	bool					canAggression();//是否可以进攻
+
+	bool					isEnemyMainBaseEliminated();
+	bool					isSneakTooLate();
+	BWAPI::Unitset			getThreatingUnits(BWTA::BaseLocation * base = nullptr);
+	void					sneak2Late();
 	// yay for singletons!
 	static InformationManager & Instance();
 };

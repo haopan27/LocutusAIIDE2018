@@ -5,11 +5,14 @@
 
 const double pi = 3.14159265358979323846;
 
-using namespace UAlbertaBot;
+using namespace DaQinBot;
 
 // The unit's ranged ground weapon does splash damage, so it works under dark swarm.
 // Firebats are not here: They are melee units.
 // Tanks and lurkers are not here: They have their own micro managers.
+//该单位的远程地面武器会造成溅射伤害，所以它在黑暗蜂群下工作。
+//火蝙蝠不在这里:它们是近战单位。
+//坦克和潜伏者不在这里:他们有自己的微型经理人。
 bool MicroRanged::goodUnderDarkSwarm(BWAPI::UnitType type)
 {
 	return
@@ -51,7 +54,7 @@ void MicroRanged::executeMicro(const BWAPI::Unitset & targets)
 {
 	assignTargets(targets);
 }
-
+/*
 struct CompareTiles {
 	bool operator() (const std::pair<BWAPI::TilePosition, double>& lhs, const std::pair<BWAPI::TilePosition, double>& rhs) const {
 		return lhs.second < rhs.second;
@@ -68,7 +71,7 @@ BWAPI::Position center(BWAPI::TilePosition tile)
 {
 	return BWAPI::Position(tile) + BWAPI::Position(16, 16);
 }
-
+*/
 void MicroRanged::assignTargets(const BWAPI::Unitset & targets)
 {
     const BWAPI::Unitset & rangedUnits = getUnits();
@@ -213,7 +216,7 @@ void MicroRanged::assignTargets(const BWAPI::Unitset & targets)
 				}
 				else
 				{
-					Micro::Move(rangedUnit, order.getPosition());
+					Micro::AttackMove(rangedUnit, order.getPosition());
 				}
 				continue;
 			}
@@ -249,7 +252,8 @@ void MicroRanged::assignTargets(const BWAPI::Unitset & targets)
                 }
 				else if (Config::Micro::KiteWithRangedUnits)
 				{
-					kite(rangedUnit, target);
+					//kite(rangedUnit, target);
+					Micro::KiteTarget(rangedUnit, target);
 				}
 				else
 				{
@@ -288,6 +292,7 @@ BWAPI::Unit MicroRanged::getTarget(BWAPI::Unit rangedUnit, const BWAPI::Unitset 
 	for (const auto target : targets)
 	{
 		// Skip targets under dark swarm that we can't hit.
+		//跳过我们无法命中的黄雾下的目标。
 		if (target->isUnderDarkSwarm() && !goodUnderDarkSwarm(rangedUnit->getType()))
 		{
 			continue;
@@ -299,7 +304,7 @@ BWAPI::Unit MicroRanged::getTarget(BWAPI::Unit rangedUnit, const BWAPI::Unitset 
 			rangedUnit->getDistance(order.getPosition()) - target->getDistance(order.getPosition());
 		
 		// Skip targets that are too far away to worry about--outside tank range.
-		if (range >= 13 * 32)
+		if (range >= 13 * 32)// && target->getDistance(order.getPosition()) >= 13 * 32)
 		{
 			continue;
 		}
@@ -313,7 +318,7 @@ BWAPI::Unit MicroRanged::getTarget(BWAPI::Unit rangedUnit, const BWAPI::Unitset 
 
 		// Let's say that 1 priority step is worth 160 pixels (5 tiles).
 		// We care about unit-target range and target-order position distance.
-		int score = 5 * 32 * priority - range;
+		int score = 4 * 32 * priority - range;
 
 		// Adjust for special features.
 		// A bonus for attacking enemies that are "in front".
@@ -430,6 +435,8 @@ BWAPI::Unit MicroRanged::getTarget(BWAPI::Unit rangedUnit, const BWAPI::Unitset 
             score += 128;
         }
 
+		//score = getMarkTargetScore(target, score);
+
 		if (score > bestScore)
 		{
 			bestScore = score;
@@ -438,6 +445,12 @@ BWAPI::Unit MicroRanged::getTarget(BWAPI::Unit rangedUnit, const BWAPI::Unitset 
 			bestPriority = priority;
 		}
 	}
+
+	/*
+	if (bestTarget) {
+		setMarkTargetScore(rangedUnit, bestTarget);
+	}
+	*/
 
 	return bestScore > 0 && !shouldIgnoreTarget(rangedUnit, bestTarget) ? bestTarget : nullptr;
 }
@@ -529,13 +542,6 @@ int MicroRanged::getAttackPriority(BWAPI::Unit rangedUnit, BWAPI::Unit target)
 			return 12;
 		}
 	}
-
-    // Observers are very high priority if we have dark templar
-    if (targetType == BWAPI::UnitTypes::Protoss_Observer &&
-        UnitUtil::GetCompletedUnitCount(BWAPI::UnitTypes::Protoss_Dark_Templar) > 0)
-    {
-        return 12;
-    }
 
 	// Wraiths, scouts, and goliaths strongly prefer air targets because they do more damage to air units.
 	if (rangedUnit->getType() == BWAPI::UnitTypes::Terran_Wraith ||
@@ -835,11 +841,11 @@ void MicroRanged::kite(BWAPI::Unit rangedUnit, BWAPI::Unit target)
 
                 // Move closer if there is a friendly unit near the position
                 moveCloser = 
-                    InformationManager::Instance().getMyUnitGrid().getCollision(position) > 0 ||
-                    InformationManager::Instance().getMyUnitGrid().getCollision(position + BWAPI::Position(-16, -16)) > 0 ||
-                    InformationManager::Instance().getMyUnitGrid().getCollision(position + BWAPI::Position(16, -16)) > 0 ||
-                    InformationManager::Instance().getMyUnitGrid().getCollision(position + BWAPI::Position(16, 16)) > 0 ||
-                    InformationManager::Instance().getMyUnitGrid().getCollision(position + BWAPI::Position(-16, 16)) > 0;
+					InformationManager::Instance().getMyUnitGrid().getCollision(position) > 0 ||
+					InformationManager::Instance().getMyUnitGrid().getCollision(position + BWAPI::Position(-16, -16)) > 0 ||
+					InformationManager::Instance().getMyUnitGrid().getCollision(position + BWAPI::Position(16, -16)) > 0 ||
+					InformationManager::Instance().getMyUnitGrid().getCollision(position + BWAPI::Position(16, 16)) > 0 ||
+					InformationManager::Instance().getMyUnitGrid().getCollision(position + BWAPI::Position(-16, 16)) > 0;
                 break;
             }
         }

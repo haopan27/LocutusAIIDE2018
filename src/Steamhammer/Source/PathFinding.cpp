@@ -5,7 +5,7 @@
 namespace { auto & bwemMap = BWEM::Map::Instance(); }
 namespace { auto & bwebMap = BWEB::Map::Instance(); }
 
-using namespace UAlbertaBot;
+using namespace DaQinBot;
 
 inline bool validChoke(const BWEM::ChokePoint * choke, int minChokeWidth, bool allowMineralWalk) 
 {

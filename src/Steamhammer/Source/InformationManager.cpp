@@ -7,11 +7,12 @@
 #include "Random.h"
 #include "UnitUtil.h"
 #include "PathFinding.h"
+#include "ScoutManager.h"
 
 namespace { auto & bwemMap = BWEM::Map::Instance(); }
 namespace { auto & bwebMap = BWEB::Map::Instance(); }
 
-using namespace UAlbertaBot;
+using namespace DaQinBot;
 
 InformationManager::InformationManager()
     : _self(BWAPI::Broodwar->self())
@@ -38,12 +39,12 @@ InformationManager::InformationManager()
 	, _enemyBaseStation(nullptr)
 	, _enemyNaturalBaseLocation(nullptr)
 
-    , _myUnitGrid(BWAPI::Broodwar->self())
-    , _enemyUnitGrid(BWAPI::Broodwar->enemy())
+	, _myUnitGrid(BWAPI::Broodwar->self())
+	, _enemyUnitGrid(BWAPI::Broodwar->enemy())
 {
 	initializeTheBases();
 	initializeRegionInformation();
-	_myNaturalBaseLocation = getNaturalBase(getMyMainBaseLocation());
+	initializeNaturalBase();
 
     // Normalize the enemy name by converting it to lowercase and removing spaces
     _enemyName = BWAPI::Broodwar->enemy()->getName();
@@ -66,49 +67,6 @@ void InformationManager::initializeTheBases()
 			_theBases[base] = new Base(base->getTilePosition());
 		}
 	}
-
-    // If the map has mineral walking chokes, flag the bases that require mineral walking for the enemy to reach
-    // Logically this means we can send a probe from our starting location to the base, but the enemy cannot
-    // send a combat unit from any of their potential starting locations to the base
-    if (MapTools::Instance().hasMineralWalkChokes())
-    {
-        // First gather the possible enemy start locations
-        std::deque<BWAPI::TilePosition> potentialEnemyStartLocations(BWAPI::Broodwar->getStartLocations());
-        for (auto it = potentialEnemyStartLocations.begin(); it != potentialEnemyStartLocations.end();)
-            if (*it == BWAPI::Broodwar->self()->getStartLocation())
-                it = potentialEnemyStartLocations.erase(it);
-            else
-                it++;
-
-        // Now loop all of the bases and do the required pathing
-        for (auto& base : _theBases)
-        {
-            // Skip bases that can't be accessed from our starting location
-            int distFromOurBase = PathFinding::GetGroundDistance(
-                base.first->getPosition(),
-                BWAPI::Position(BWAPI::Broodwar->self()->getStartLocation()),
-                BWAPI::UnitTypes::Protoss_Probe,
-                PathFinding::PathFindingOptions::UseNearestBWEMArea);
-            if (distFromOurBase == -1) continue;
-
-            // Check all of the potential enemy start locations and flip to false
-            // if any are accessible
-            base.second->requiresMineralWalkFromEnemyStartLocations = true;
-            for (auto& tile : potentialEnemyStartLocations)
-            {
-                int distFromEnemyStartLocation = PathFinding::GetGroundDistance(
-                    base.first->getPosition(),
-                    BWAPI::Position(tile),
-                    BWAPI::UnitTypes::Zerg_Zergling,
-                    PathFinding::PathFindingOptions::UseNearestBWEMArea);
-                if (distFromEnemyStartLocation != -1)
-                {
-                    base.second->requiresMineralWalkFromEnemyStartLocations = false;
-                    break;
-                }
-            }
-        }
-    }
 }
 
 // Set up _mainBaseLocations and _occupiedLocations.
@@ -118,34 +76,46 @@ void InformationManager::initializeRegionInformation()
 	_mainBaseLocations[_enemy] = BWTA::getStartLocation(_enemy);
 
 	// push that region into our occupied vector
+	_myRegionVertices = MapTools::Instance().calculateEnemyRegionVertices(_mainBaseLocations[_self]);
 	updateOccupiedRegions(BWTA::getRegion(_mainBaseLocations[_self]->getTilePosition()), _self);
 }
 
 // Figure out what base is our "natural expansion". In rare cases, there might be none.
 // Prerequisite: Call initializeRegionInformation() first.
-BWTA::BaseLocation * InformationManager::getNaturalBase(BWTA::BaseLocation * main)
+void InformationManager::initializeNaturalBase()
 {
 	// We'll go through the bases and pick the best one as the natural.
 	BWTA::BaseLocation * bestBase = nullptr;
 	double bestScore = 0.0;
 
+	BWAPI::TilePosition homeTile = _self->getStartLocation();
+	BWAPI::Position myBasePosition(homeTile);
+
 	for (BWTA::BaseLocation * base : BWTA::getBaseLocations())
 	{
-        if (base == main) continue;
-        if (base->gas() == 0) continue;
+		double score = 0.0;
 
-        // Get ground distance and abort if not connected
-        int dist = PathFinding::GetGroundDistance(
-            main->getPosition(), 
-            base->getPosition(), 
-            BWAPI::UnitTypes::Protoss_Probe, 
-            PathFinding::PathFindingOptions::UseNearestBWEMArea);
-        if (dist == -1) continue;
+		BWAPI::TilePosition tile = base->getTilePosition();
 
-        // Score the base
-        double score = -dist;
+		// The main is not the natural.
+		if (tile == homeTile)
+		{
+			continue;
+		}
 
-        // More resources -> better.
+		// Ww want to be close to our own base.
+		double distanceFromUs = MapTools::Instance().getGroundTileDistance(BWAPI::Position(tile), myBasePosition);
+
+		// If it is not connected, skip it. Islands do this.
+		if (!BWTA::isConnected(homeTile, tile) || distanceFromUs < 0)
+		{
+			continue;
+		}
+
+		// Add up the score.
+		score = -distanceFromUs;
+
+		// More resources -> better.
 		score += 0.01 * base->minerals() + 0.02 * base->gas();
 
 		if (!bestBase || score > bestScore)
@@ -155,7 +125,117 @@ BWTA::BaseLocation * InformationManager::getNaturalBase(BWTA::BaseLocation * mai
 		}
 	}
 
-    return bestBase;
+	// bestBase may be null on unusual maps.
+	_myNaturalBaseLocation = bestBase;
+}
+
+BWTA::BaseLocation * InformationManager::getEnemyNaturalLocation()
+{
+	if (_enemyNaturalBaseLocation || !getEnemyMainBaseLocation()) return _enemyNaturalBaseLocation;
+
+	// We'll go through the bases and pick the best one as the natural.
+	BWTA::BaseLocation * bestBase = nullptr;
+	double bestScore = 0.0;
+
+	if (!_mainBaseLocations[_enemy]) return bestBase;
+
+	BWAPI::TilePosition homeTile = _mainBaseLocations[_enemy]->getTilePosition();
+	BWAPI::Position myBasePosition(homeTile);
+
+	for (BWTA::BaseLocation * base : BWTA::getBaseLocations())
+	{
+		double score = 0.0;
+
+		BWAPI::TilePosition tile = base->getTilePosition();
+
+		// The main is not the natural.
+		if (tile == homeTile)
+		{
+			continue;
+		}
+
+		// Ww want to be close to our own base.
+		double distanceFromUs = MapTools::Instance().getGroundTileDistance(BWAPI::Position(tile), myBasePosition);
+
+		// If it is not connected, skip it. Islands do this.
+		if (!BWTA::isConnected(homeTile, tile) || distanceFromUs < 0)
+		{
+			continue;
+		}
+
+		// Add up the score.
+		score = -distanceFromUs;
+
+		// More resources -> better.
+		score += 0.01 * base->minerals() + 0.02 * base->gas();
+
+		if (!bestBase || score > bestScore)
+		{
+			bestBase = base;
+			bestScore = score;
+		}
+	}
+
+	// bestBase may be null on unusual maps.
+	_enemyNaturalBaseLocation = bestBase;
+	return _enemyNaturalBaseLocation;
+}
+
+//获取敌人下一个可能发展的基地
+const BWTA::BaseLocation * InformationManager::getEnemyNextLocation()
+{
+	// We'll go through the bases and pick the best one as the natural.
+	BWTA::BaseLocation * bestBase = nullptr;
+	double bestScore = 0.0;
+
+	if (!_mainBaseLocations[_enemy]) return _enemyNextLocation;
+
+	BWAPI::TilePosition homeTile = _mainBaseLocations[_enemy]->getTilePosition();
+	BWAPI::Position enemyBasePosition(homeTile);
+
+	for (BWTA::BaseLocation * base : BWTA::getBaseLocations())
+	{
+		if (base == getEnemyMainBaseLocation() || base == getEnemyNaturalLocation()) continue;
+
+		if (getBase(base)->owner == _enemy) {
+			continue;
+		}
+
+		double score = 0.0;
+
+		BWAPI::TilePosition tile = base->getTilePosition();
+
+		// The main is not the natural.
+		if (tile == homeTile)
+		{
+			continue;
+		}
+
+		// Ww want to be close to our own base.
+		double distanceFromUs = MapTools::Instance().getGroundTileDistance(BWAPI::Position(tile), enemyBasePosition);
+
+		// If it is not connected, skip it. Islands do this.
+		if (!BWTA::isConnected(homeTile, tile) || distanceFromUs < 0)
+		{
+			continue;
+		}
+
+		// Add up the score.
+		score = -distanceFromUs;
+
+		// More resources -> better.
+		score += 0.01 * base->minerals() + 0.02 * base->gas();
+
+		if (score > bestScore)
+		{
+			bestBase = base;
+			bestScore = score;
+		}
+	}
+
+	_enemyNextLocation = bestBase;
+
+	return _enemyNextLocation;
 }
 
 // A base is inferred to exist at the given position, without having been seen.
@@ -225,6 +305,8 @@ void InformationManager::baseLost(BWTA::BaseLocation * base)
 
 // Our main base has been destroyed. Choose a new one if possible.
 // Otherwise we'll keep trying to build in the old one, where the enemy may still be.
+//我们的主要基地被摧毁了。如果可能的话，选择一个新的。
+//否则，我们将继续设法在敌人可能还在的老房子里建房子。
 void InformationManager::chooseNewMainBase()
 {
 	BWTA::BaseLocation * oldMain = getMyMainBaseLocation();
@@ -256,6 +338,7 @@ void InformationManager::chooseNewMainBase()
 }
 
 // With some probability, randomly choose a base as the new "main" base.
+//根据一定的概率，随机选择一个基作为新的“主基”。
 void InformationManager::maybeChooseNewMainBase()
 {
 	// 1. If out of book, decide randomly whether to choose a new base.
@@ -297,6 +380,8 @@ void InformationManager::maybeAddBase(BWAPI::Unit unit)
 
 // The two possible base positions are close enough together
 // that we can say they are "the same place" as a base.
+//这两个可能的基地位置非常接近
+//我们可以说他们和基地在同一个地方。
 bool InformationManager::closeEnough(BWAPI::TilePosition a, BWAPI::TilePosition b)
 {
 	return abs(a.x - b.x) <= 3 && abs(a.y - b.y) <= 3;
@@ -304,10 +389,6 @@ bool InformationManager::closeEnough(BWAPI::TilePosition a, BWAPI::TilePosition 
 
 void InformationManager::update()
 {
-    // Update the upgrade trackers first, as they adjust the grids when the range or damage changes
-    for (auto & upgradeTracker : _upgradeTrackers)
-        upgradeTracker.second.update(getUnitInfo(upgradeTracker.first), getUnitGrid(upgradeTracker.first));
-
 	updateUnitInfo();
 	updateBaseLocationInfo();
 	updateTheBases();
@@ -323,28 +404,7 @@ void InformationManager::update()
     {
         LocutusUnit& locutusUnit = getLocutusUnit(unit);
 
-        if (unit->getType() == BWAPI::UnitTypes::Protoss_Zealot && false)
-        {
-            anyDebugUnits = true;
-
-            debug << "\n" << unit->getType() << " " << unit->getID() << " @ " << unit->getPosition() << ": ";
-
-            debug << "command: " << unit->getLastCommand().getType() << ",frame=" << (BWAPI::Broodwar->getFrameCount() - unit->getLastCommandFrame());
-            if (unit->getLastCommand().getTarget())
-                debug << ",target=" << unit->getLastCommand().getTarget()->getType() << " " << unit->getLastCommand().getTarget()->getID() << " @ " << unit->getLastCommand().getTarget()->getPosition() << ",dist=" << unit->getLastCommand().getTarget()->getDistance(unit);
-            else if (unit->getLastCommand().getTargetPosition())
-                debug << ",targetpos " << unit->getLastCommand().getTargetPosition();
-
-            debug << ". order: " << unit->getOrder();
-            if (unit->getOrderTarget())
-                debug << ",target=" << unit->getOrderTarget()->getType() << " " << unit->getOrderTarget()->getID() << " @ " << unit->getOrderTarget()->getPosition() << ",dist=" << unit->getOrderTarget()->getDistance(unit);
-            else if (unit->getOrderTargetPosition())
-                debug << ",targetpos " << unit->getOrderTargetPosition();
-
-            debug << ". isMoving=" << unit->isMoving() << ";isattackframe=" << unit->isAttackFrame() << ";isstartingattack=" << unit->isStartingAttack() << ";cooldown=" << unit->getGroundWeaponCooldown();
-        }
-
-        if (unit->getType() == BWAPI::UnitTypes::Protoss_Dragoon && false)
+        if (unit->getType() == BWAPI::UnitTypes::Protoss_Dragoon && true)
         {
             anyDebugUnits = true;
 
@@ -398,28 +458,7 @@ void InformationManager::update()
         {
             anyDebugUnits = true;
 
-            debug << "\n" << unit->getType() << " " << unit->getID() << " @ " << unit->getPosition() << "^" << BWAPI::Broodwar->getGroundHeight(BWAPI::TilePosition(unit->getPosition())) << ": ";
-
-            debug << "command: " << unit->getLastCommand().getType() << ",frame=" << (BWAPI::Broodwar->getFrameCount() - unit->getLastCommandFrame());
-            if (unit->getLastCommand().getTarget())
-                debug << ",target=" << unit->getLastCommand().getTarget()->getType() << " " << unit->getLastCommand().getTarget()->getID() << " @ " << unit->getLastCommand().getTarget()->getPosition() << ",dist=" << unit->getLastCommand().getTarget()->getDistance(unit);
-            else if (unit->getLastCommand().getTargetPosition())
-                debug << ",targetpos " << unit->getLastCommand().getTargetPosition();
-
-            debug << ". order: " << unit->getOrder();
-            if (unit->getOrderTarget())
-                debug << ",target=" << unit->getOrderTarget()->getType() << " " << unit->getOrderTarget()->getID() << " @ " << unit->getOrderTarget()->getPosition() << ",dist=" << unit->getOrderTarget()->getDistance(unit);
-            else if (unit->getOrderTargetPosition())
-                debug << ",targetpos " << unit->getOrderTargetPosition();
-
-            debug << ". isMoving=" << unit->isMoving();
-        }        
-        
-        else if (unit->getType() == BWAPI::UnitTypes::Protoss_High_Templar && true)
-        {
-            anyDebugUnits = true;
-
-            debug << "\n" << unit->getType() << " " << unit->getID() << " @ " << unit->getPosition() << "^" << BWAPI::Broodwar->getGroundHeight(BWAPI::TilePosition(unit->getPosition())) << ": ";
+            debug << "\n" << unit->getType() << " " << unit->getID() << " @ " << unit->getPosition() << ": ";
 
             debug << "command: " << unit->getLastCommand().getType() << ",frame=" << (BWAPI::Broodwar->getFrameCount() - unit->getLastCommandFrame());
             if (unit->getLastCommand().getTarget())
@@ -504,7 +543,7 @@ void InformationManager::updateBaseLocationInfo()
 		for (BWTA::BaseLocation * startLocation : BWTA::getStartLocations()) 
 		{
 			if (isEnemyBuildingInRegion(BWTA::getRegion(startLocation->getTilePosition()), true) ||
-                isEnemyBuildingNearby(startLocation->getPosition(), 1500))
+				isEnemyBuildingNearby(startLocation->getPosition(), 1500) || isEnemyUnitNearby(startLocation->getPosition(), 1500))
 			{
 				updateOccupiedRegions(BWTA::getRegion(startLocation->getTilePosition()), _enemy);
 
@@ -561,6 +600,7 @@ void InformationManager::updateBaseLocationInfo()
 	}
 
 	// The enemy occupies a region if it has a building there.
+	_enemyFightScore = 0;
 	for (const auto & kv : _unitData[_enemy].getUnits())
 	{
 		const UnitInfo & ui(kv.second);
@@ -568,6 +608,10 @@ void InformationManager::updateBaseLocationInfo()
 		if (ui.type.isBuilding() && !ui.goneFromLastPosition)
 		{
 			updateOccupiedRegions(BWTA::getRegion(BWAPI::TilePosition(ui.lastPosition)), _enemy);
+		}
+
+		if (ui.type.canAttack() && ui.completed && !ui.type.isWorker()) {//!ui.type.isBuilding() && 
+			_enemyFightScore += ui.fightScore;//计算敌方战斗力
 		}
 	}
 
@@ -581,6 +625,8 @@ void InformationManager::updateBaseLocationInfo()
     {
         naturalRegion = BWTA::getRegion(naturalLocation->getPosition());
     }
+
+	_selfFightScore = 0;
 	for (const auto & kv : _unitData[_self].getUnits())
 	{
 		const UnitInfo & ui(kv.second);
@@ -593,6 +639,10 @@ void InformationManager::updateBaseLocationInfo()
                 region = naturalRegion;
 
 			updateOccupiedRegions(region, _self);
+		}
+
+		if (ui.type.canAttack() && ui.completed && !ui.type.isWorker()) {//!ui.type.isBuilding() && 
+			_selfFightScore += ui.fightScore;
 		}
 	}
 }
@@ -663,6 +713,8 @@ void InformationManager::enemyBaseLocationFromOverlordSighting()
 
 // _theBases is not always correctly updated by the event-driven methods.
 // Look for conflicting information and make corrections.
+// _base并不总是由事件驱动的方法正确更新的。
+//寻找矛盾的信息并改正。
 void InformationManager::updateTheBases()
 {
 	for (BWTA::BaseLocation * base : BWTA::getBaseLocations())
@@ -734,6 +786,8 @@ void InformationManager::updateOccupiedRegions(BWTA::Region * region, BWAPI::Pla
 
 // If we can see the last known location of a remembered unit and the unit is not there,
 // set the unit's goneFromLastPosition flag.
+//如果我们能看到一个记忆单元的最后已知位置，而这个单元不在那里，
+//设置单位的goneFromLastPosition标志。
 void InformationManager::updateGoneFromLastPosition()
 {
 	// We don't need to check often.
@@ -749,6 +803,8 @@ void InformationManager::updateGoneFromLastPosition()
 
 // Currently only checks for marine range via bullets from bunkers
 // TODO: Use this to implement dodging
+//目前只检查从掩体发射的子弹的射程
+// TODO:用这个来实现躲避
 void InformationManager::updateBullets()
 {
     if (_enemyHasInfantryRangeUpgrade || BWAPI::Broodwar->enemy()->getRace() != BWAPI::Races::Terran) return;
@@ -890,6 +946,8 @@ void floodFill(BWAPI::TilePosition start, std::set<BWAPI::TilePosition> & visite
 
 // Called on any new enemy unit discovery or when a flying building lands
 // If it is near a chokepoint, we check if it creates a wall
+//召唤任何新的敌人单位发现或当一个飞行的建筑降落
+//如果它接近一个瓶颈，我们检查它是否创建了一堵墙
 void InformationManager::detectEnemyWall(BWAPI::Unit unit)
 {
     if (!unit->getType().isBuilding()) return;
@@ -907,16 +965,8 @@ void InformationManager::detectEnemyWall(BWAPI::Unit unit)
             if (enemyWalls.find(choke) != enemyWalls.end()) continue;
 
             // Determine which area is on our side of the wall
-            int firstDist = PathFinding::GetGroundDistance(
-                BWAPI::Position(choke->GetAreas().first->Top()), 
-                getMyMainBaseLocation()->getPosition(), 
-                BWAPI::UnitTypes::Protoss_Dragoon, 
-                PathFinding::PathFindingOptions::UseNearestBWEMArea);
-            int secondDist = PathFinding::GetGroundDistance(
-                BWAPI::Position(choke->GetAreas().second->Top()), 
-                getMyMainBaseLocation()->getPosition(), 
-                BWAPI::UnitTypes::Protoss_Dragoon,
-                PathFinding::PathFindingOptions::UseNearestBWEMArea);
+			int firstDist = PathFinding::GetGroundDistance(BWAPI::Position(choke->GetAreas().first->Top()), getMyMainBaseLocation()->getPosition(), BWAPI::UnitTypes::Protoss_Dragoon, PathFinding::PathFindingOptions::UseNearestBWEMArea);
+			int secondDist = PathFinding::GetGroundDistance(BWAPI::Position(choke->GetAreas().second->Top()), getMyMainBaseLocation()->getPosition(), BWAPI::UnitTypes::Protoss_Dragoon, PathFinding::PathFindingOptions::UseNearestBWEMArea);
             auto closestArea = (firstDist < secondDist) ? choke->GetAreas().first : choke->GetAreas().second;
             auto furthestArea = (firstDist < secondDist) ? choke->GetAreas().second : choke->GetAreas().first;
 
@@ -1048,6 +1098,7 @@ bool InformationManager::isBehindEnemyWall(BWAPI::Unit attacker, BWAPI::Unit tar
 }
 
 // Returns true if the give tile is either part of an enemy wall or is in the area behind the wall
+//如果给定的瓷砖是敌人墙的一部分，或者位于墙后的区域，则返回true
 bool InformationManager::isBehindEnemyWall(BWAPI::TilePosition tile)
 {
     for (auto & wall : enemyWalls)
@@ -1068,6 +1119,8 @@ bool InformationManager::isEnemyBuildingInRegion(BWTA::Region * region, bool ign
 		const UnitInfo & ui(kv.second);
 
         if (ignoreRefineries && ui.type.isRefinery()) continue;
+
+		//if (ui.type == BWAPI::UnitTypes::Zerg_Hatchery && !ui.completed && BWAPI::Broodwar->getFrameCount() < 6000) continue;
 
 		if (ui.type.isBuilding() && !ui.goneFromLastPosition)
 		{
@@ -1091,6 +1144,25 @@ bool InformationManager::isEnemyBuildingNearby(BWAPI::Position position, int thr
 		{
 			if (ui.lastPosition.getApproxDistance(position) < threshold) 
 			{
+				_enemyProxyPosition = ui.lastPosition;
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool InformationManager::isEnemyUnitNearby(BWAPI::Position position, int threshold)
+{
+	for (const auto & kv : _unitData[_enemy].getUnits())
+	{
+		const UnitInfo & ui(kv.second);
+
+		if (!ui.type.isBuilding() && !ui.goneFromLastPosition && !ui.type.isWorker())
+		{
+			if (ui.lastPosition.getApproxDistance(position) < threshold)
+			{
 				return true;
 			}
 		}
@@ -1102,6 +1174,26 @@ bool InformationManager::isEnemyBuildingNearby(BWAPI::Position position, int thr
 const UIMap & InformationManager::getUnitInfo(BWAPI::Player player) const
 {
 	return getUnitData(player).getUnits();
+}
+
+BWAPI::Unitset InformationManager::getUnits(BWAPI::Player player, BWAPI::UnitType type)
+{
+	BWAPI::Unitset unitMap;
+	UnitData unitData = getUnitData(player);
+
+	if (!unitData.getUnits().empty()) {
+		for (const auto & kv : unitData.getUnits())
+		{
+			const UnitInfo & ui(kv.second);
+
+			if (ui.type == type)
+			{
+				unitMap.insert(ui.unit);
+			}
+		}
+	}
+
+	return unitMap;
 }
 
 std::set<BWTA::Region *> & InformationManager::getOccupiedRegions(BWAPI::Player player)
@@ -1180,15 +1272,6 @@ BWAPI::Unit InformationManager::getBaseDepot(BWTA::BaseLocation * base)
 BWTA::BaseLocation * InformationManager::getMyNaturalLocation()
 {
 	return _myNaturalBaseLocation;
-}
-
-BWTA::BaseLocation * InformationManager::getEnemyNaturalLocation()
-{
-    if (_enemyNaturalBaseLocation) return _enemyNaturalBaseLocation;
-    if (!getEnemyMainBaseLocation()) return nullptr;
-
-    _enemyNaturalBaseLocation = getNaturalBase(getEnemyMainBaseLocation());
-    return _enemyNaturalBaseLocation;
 }
 
 // All bases owned by me.
@@ -1509,12 +1592,14 @@ void InformationManager::drawUnitInformation(int x, int y)
 
 	char color = white;
 
-	BWAPI::Broodwar->drawTextScreen(x, y-10, "\x03 Self Loss:\x04 Minerals: \x1f%d \x04Gas: \x07%d", _unitData[_self].getMineralsLost(), _unitData[_self].getGasLost());
-    BWAPI::Broodwar->drawTextScreen(x, y, "\x03 Enemy Loss:\x04 Minerals: \x1f%d \x04Gas: \x07%d", _unitData[_enemy].getMineralsLost(), _unitData[_enemy].getGasLost());
-	BWAPI::Broodwar->drawTextScreen(x, y+10, "\x04 Enemy: %s", _enemy->getName().c_str());
-	BWAPI::Broodwar->drawTextScreen(x, y+20, "\x04 UNIT NAME");
-	BWAPI::Broodwar->drawTextScreen(x+140, y+20, "\x04#");
-	BWAPI::Broodwar->drawTextScreen(x+160, y+20, "\x04X");
+	BWAPI::Broodwar->drawTextScreen(x, y - 10, "\x03 Fight:\x04 Self:\x1f%.1lf \x04 Enemy:\x07%.1lf", _selfFightScore, _enemyFightScore);
+    
+	BWAPI::Broodwar->drawTextScreen(x, y, "\x03 Self Loss:\x04 Minerals: \x1f%d \x04Gas: \x07%d", _unitData[_self].getMineralsLost(), _unitData[_self].getGasLost());
+	BWAPI::Broodwar->drawTextScreen(x, y + 10, "\x03 Enemy Loss:\x04 Minerals: \x1f%d \x04Gas: \x07%d", _unitData[_enemy].getMineralsLost(), _unitData[_enemy].getGasLost());
+	BWAPI::Broodwar->drawTextScreen(x, y + 20, "\x04 Enemy: %s", _enemy->getName().c_str());
+	BWAPI::Broodwar->drawTextScreen(x, y+30, "\x04 UNIT NAME");
+	BWAPI::Broodwar->drawTextScreen(x+140, y+30, "\x04#");
+	BWAPI::Broodwar->drawTextScreen(x+160, y+30, "\x04X");
 
 	int yspace = 0;
 
@@ -1543,6 +1628,71 @@ void InformationManager::drawMapInformation()
 	if (Config::Debug::DrawMapInfo)
 	{
 		Bases::Instance().drawBaseInfo();
+	}
+
+	if (!Config::Debug::DrawBWTAInfo)
+	{
+		return;
+	}
+
+	// iterate through all the base locations, and draw their outlines.
+	for (std::set<BWTA::BaseLocation*>::const_iterator i = BWTA::getBaseLocations().begin(); i != BWTA::getBaseLocations().end(); i++)
+	{
+		BWAPI::TilePosition p = (*i)->getTilePosition();
+		BWAPI::Position c = (*i)->getPosition();
+
+		//draw outline of center location
+		BWAPI::Broodwar->drawBoxMap(p.x * 32, p.y * 32, p.x * 32 + 4 * 32, p.y * 32 + 3 * 32, BWAPI::Colors::Blue);
+
+		//draw a circle at each mineral patch
+		for (BWAPI::Unitset::iterator j = (*i)->getStaticMinerals().begin(); j != (*i)->getStaticMinerals().end(); j++)
+		{
+			BWAPI::Position q = (*j)->getInitialPosition();
+			BWAPI::Broodwar->drawCircleMap(q.x, q.y, 30, BWAPI::Colors::Cyan);
+		}
+
+		//draw the outlines of vespene geysers
+		for (BWAPI::Unitset::iterator j = (*i)->getGeysers().begin(); j != (*i)->getGeysers().end(); j++)
+		{
+			BWAPI::TilePosition q = (*j)->getTilePosition();
+			BWAPI::Broodwar->drawBoxMap(q.x * 32, q.y * 32, q.x * 32 + 4 * 32, q.y * 32 + 2 * 32, BWAPI::Colors::Orange);
+		}
+
+		//if this is an island expansion, draw a yellow circle around the base location
+		if ((*i)->isIsland())
+			BWAPI::Broodwar->drawCircleMap(c, 80, BWAPI::Colors::Yellow);
+	}
+
+	//we will iterate through all the regions and draw the polygon outline of it in green.
+	for (std::set<BWTA::Region*>::const_iterator r = BWTA::getRegions().begin(); r != BWTA::getRegions().end(); r++)
+	{
+		BWTA::Polygon p = (*r)->getPolygon();
+		for (int j = 0; j<(int)p.size(); j++)
+		{
+			BWAPI::Position point1 = p[j];
+			BWAPI::Position point2 = p[(j + 1) % p.size()];
+			BWAPI::Broodwar->drawLineMap(point1, point2, BWAPI::Colors::Green);
+		}
+	}
+
+	//we will visualize the chokepoints with red lines
+	//我们会用红线来可视化瓶颈
+	for (std::set<BWTA::Region*>::const_iterator r = BWTA::getRegions().begin(); r != BWTA::getRegions().end(); r++)
+	{
+		for (std::set<BWTA::Chokepoint*>::const_iterator c = (*r)->getChokepoints().begin(); c != (*r)->getChokepoints().end(); c++)
+		{
+			BWAPI::Position point1 = (*c)->getSides().first;
+			BWAPI::Position point2 = (*c)->getSides().second;
+			BWAPI::Broodwar->drawLineMap(point1, point2, BWAPI::Colors::Red);
+
+			BWAPI::Broodwar->drawCircleMap((*c)->getCenter(), 3, BWAPI::Colors::Red, true);
+		}
+	}
+
+	for (size_t i(0); i < _myRegionVertices.size(); ++i)
+	{
+		BWAPI::Broodwar->drawCircleMap(_myRegionVertices[i], 4, BWAPI::Colors::Green, false);
+		BWAPI::Broodwar->drawTextMap(_myRegionVertices[i], "%d", i);
 	}
 }
 
@@ -1626,11 +1776,14 @@ void InformationManager::onUnitDestroy(BWAPI::Unit unit)
 		{
 			_staticDefense.erase(unit);
 		}
+
+		removeAttackDamages(unit); 
+		removeAttackNumbers(unit);
 	}
 
     if (unit->getPlayer() == _self)
     {
-        _myUnitGrid.unitDestroyed(unit->getType(), unit->getPosition(), unit->isCompleted());
+		_myUnitGrid.unitDestroyed(unit->getType(), unit->getPosition(), unit->isCompleted());
     }
 
     if (unit->getPlayer() == _enemy)
@@ -1667,6 +1820,7 @@ void InformationManager::onEnemyBuildingFlying(BWAPI::UnitType type, BWAPI::Posi
 }
 
 // Only returns units believed to be completed.
+//只返回据信已完成的单位。
 void InformationManager::getNearbyForce(std::vector<UnitInfo> & unitInfo, BWAPI::Position p, BWAPI::Player player, int radius) 
 {
 	// for each unit we know about for that player
@@ -1681,7 +1835,8 @@ void InformationManager::getNearbyForce(std::vector<UnitInfo> & unitInfo, BWAPI:
 			if (ui.type == BWAPI::UnitTypes::Terran_Medic)
 			{
 				// Spellcasters that the combat simulator is able to simulate.
-				if (ui.lastPosition.getDistance(p) <= (radius + 64))
+				//战斗模拟器能够模拟的施法者。
+				if (ui.lastPosition.getDistance(p) <= (radius + 32))
 				{
 					unitInfo.push_back(ui);
 				}
@@ -1731,37 +1886,37 @@ Base* InformationManager::baseAt(BWAPI::TilePosition baseTilePosition)
     return nullptr;
 }
 
-bool InformationManager::haveWeTakenOurNatural() 
+bool InformationManager::haveWeTakenOurNatural()
 {
-    // Might not have a natural
-    if (!getMyNaturalLocation()) return false;
+	// Might not have a natural
+	if (!getMyNaturalLocation()) return false;
 
-    // Do we own the base?
-    if (BWAPI::Broodwar->self() == InformationManager::Instance().getBaseOwner(getMyNaturalLocation())) return true;
+	// Do we own the base?
+	if (BWAPI::Broodwar->self() == InformationManager::Instance().getBaseOwner(getMyNaturalLocation())) return true;
 
-    // Is a building at the natural or wall locations at the top of the production queue?
-    auto & queue = ProductionManager::Instance().getQueue();
-    if (!queue.isEmpty())
-    {
-        MacroAct topProductionQueue = ProductionManager::Instance().getQueue().getHighestPriorityItem().macroAct;
-        if (topProductionQueue.isBuilding() && (
-                topProductionQueue.getMacroLocation() == MacroLocation::Natural ||
-                topProductionQueue.getMacroLocation() == MacroLocation::Wall))
-        {
-            return true;
-        }
-    }
+	// Is a building at the natural or wall locations at the top of the production queue?
+	auto & queue = ProductionManager::Instance().getQueue();
+	if (!queue.isEmpty())
+	{
+		MacroAct topProductionQueue = ProductionManager::Instance().getQueue().getHighestPriorityItem().macroAct;
+		if (topProductionQueue.isBuilding() && (
+			topProductionQueue.getMacroLocation() == MacroLocation::Natural ||
+			topProductionQueue.getMacroLocation() == MacroLocation::Wall))
+		{
+			return true;
+		}
+	}
 
-    // Is either the natural nexus or a wall building in our building manager queue?
-    LocutusWall& wall = BuildingPlacer::Instance().getWall();
-    for (auto queuedBuilding : BuildingManager::Instance().buildingsQueued())
-        if (wall.containsBuildingAt(queuedBuilding->finalPosition) ||
-            (queuedBuilding->type.isResourceDepot() && queuedBuilding->finalPosition == getMyNaturalLocation()->getTilePosition()))
-        {
-            return true;
-        }
+	// Is either the natural nexus or a wall building in our building manager queue?
+	LocutusWall& wall = BuildingPlacer::Instance().getWall();
+	for (auto queuedBuilding : BuildingManager::Instance().buildingsQueued())
+		if (wall.containsBuildingAt(queuedBuilding->finalPosition) ||
+			(queuedBuilding->type.isResourceDepot() && queuedBuilding->finalPosition == getMyNaturalLocation()->getTilePosition()))
+		{
+			return true;
+		}
 
-    return false;
+	return false;
 }
 
 // We have complated combat units (excluding workers).
@@ -1927,7 +2082,7 @@ bool InformationManager::enemyHasAntiAir()
 // Overlords and lifted buildings are excluded.
 // A queen's nest is not air tech--it's usually a prerequisite for hive
 // rather than to make queens. So we have to see a queen for it to count.
-// Similarly a robotics facility is usually for obs so let's wait until we see a shuttle.
+// Protoss robo fac and terran starport are taken to imply air units.
 bool InformationManager::enemyHasAirTech()
 {
 	// Latch: Once they're known to have the tech, they always have it.
@@ -1942,7 +2097,7 @@ bool InformationManager::enemyHasAirTech()
 
 		bool completed = ui.completed || ui.estimatedCompletionFrame < BWAPI::Broodwar->getFrameCount();
 
-		if ((ui.type.isFlyer() && ui.type != BWAPI::UnitTypes::Zerg_Overlord && ui.type != BWAPI::UnitTypes::Protoss_Observer) ||
+		if ((ui.type.isFlyer() && ui.type != BWAPI::UnitTypes::Zerg_Overlord) ||
 			(completed && ui.type == BWAPI::UnitTypes::Terran_Starport) ||
 			ui.type == BWAPI::UnitTypes::Terran_Control_Tower ||
 			ui.type == BWAPI::UnitTypes::Terran_Science_Facility ||
@@ -1951,6 +2106,9 @@ bool InformationManager::enemyHasAirTech()
 			(completed && ui.type == BWAPI::UnitTypes::Protoss_Stargate) ||
 			ui.type == BWAPI::UnitTypes::Protoss_Arbiter_Tribunal ||
 			ui.type == BWAPI::UnitTypes::Protoss_Fleet_Beacon ||
+			ui.type == BWAPI::UnitTypes::Protoss_Robotics_Facility ||
+			ui.type == BWAPI::UnitTypes::Protoss_Robotics_Support_Bay ||
+			ui.type == BWAPI::UnitTypes::Protoss_Observatory ||
 			(completed && ui.type == BWAPI::UnitTypes::Zerg_Spire) ||
 			ui.type == BWAPI::UnitTypes::Zerg_Greater_Spire)
 		{
@@ -1999,10 +2157,7 @@ bool InformationManager::enemyHasAirCombatUnits()
 	{
 		const UnitInfo & ui(kv.second);
 
-		if (!ui.type.isBuilding() && ui.type.isFlyer() && 
-            ui.type != BWAPI::UnitTypes::Zerg_Overlord && 
-            ui.type != BWAPI::UnitTypes::Protoss_Observer && 
-            ui.type != BWAPI::UnitTypes::Zerg_Scourge)
+		if (!ui.type.isBuilding() && ui.type.isFlyer() && ui.type != BWAPI::UnitTypes::Zerg_Overlord && ui.type != BWAPI::UnitTypes::Zerg_Scourge)
 		{
 			Log().Get() << "Detected enemy air combat unit";
 			_enemyHasAirCombatUnits = true;
@@ -2067,6 +2222,7 @@ bool InformationManager::enemyHasMobileCloakTech()
 			ui.type == BWAPI::UnitTypes::Protoss_Templar_Archives ||   // assume DT
 			ui.type == BWAPI::UnitTypes::Protoss_Arbiter_Tribunal ||
 			ui.type == BWAPI::UnitTypes::Protoss_Arbiter ||
+			ui.type == BWAPI::UnitTypes::Terran_Vulture_Spider_Mine ||
 			ui.type == BWAPI::UnitTypes::Zerg_Lurker ||
 			ui.type == BWAPI::UnitTypes::Zerg_Lurker_Egg)
 		{
@@ -2091,9 +2247,10 @@ bool InformationManager::enemyHasCloakedCombatUnits()
     {
         const UnitInfo & ui(kv.second);
 
-        if (ui.type.isCloakable() ||                                   // wraith, ghost
+        if ((ui.type.isCloakable() && ui.type != BWAPI::UnitTypes::Protoss_Observer) ||                                   // wraith, ghost
             ui.type == BWAPI::UnitTypes::Protoss_Dark_Templar ||
-            ui.type == BWAPI::UnitTypes::Zerg_Lurker ||
+            ui.type == BWAPI::UnitTypes::Protoss_Arbiter ||
+			ui.type == BWAPI::UnitTypes::Zerg_Lurker ||
             ui.type == BWAPI::UnitTypes::Zerg_Lurker_Egg)
         {
             Log().Get() << "Detected enemy cloaked combat unit";
@@ -2255,43 +2412,85 @@ bool InformationManager::enemyHasInfantryRangeUpgrade()
 	return false;
 }
 
-UpgradeTracker & InformationManager::getUpgradeTracker(BWAPI::Player player)
-{
-    auto it = _upgradeTrackers.find(player);
-    if (it != _upgradeTrackers.end()) return it->second;
-
-    _upgradeTrackers.emplace(std::make_pair(player, UpgradeTracker(player)));
-    it = _upgradeTrackers.find(player);
-    return it->second;
-}
-
 int InformationManager::getWeaponDamage(BWAPI::Player player, BWAPI::WeaponType wpn)
 {
-    return getUpgradeTracker(player).getWeaponDamage(wpn);
+    if (player == BWAPI::Broodwar->self()) return player->damage(wpn);
+
+    int last = enemyWeaponDamage[wpn];
+    int current = player->damage(wpn);
+    if (current > last)
+    {
+        enemyWeaponDamage[wpn] = current;
+        return current;
+    }
+
+    return last;
 }
 
 int InformationManager::getWeaponRange(BWAPI::Player player, BWAPI::WeaponType wpn)
 {
-    return getUpgradeTracker(player).getWeaponRange(wpn);
+    if (player == BWAPI::Broodwar->self()) return player->weaponMaxRange(wpn);
+
+    int last = enemyWeaponRange[wpn];
+    int current = player->weaponMaxRange(wpn);
+    if (current > last)
+    {
+        enemyWeaponRange[wpn] = current;
+        return current;
+    }
+
+    return last;
 }
 
 int InformationManager::getUnitCooldown(BWAPI::Player player, BWAPI::UnitType type)
 {
-    return getUpgradeTracker(player).getUnitCooldown(type);
+    if (player == BWAPI::Broodwar->self()) return player->weaponDamageCooldown(type);
+
+    int last = enemyUnitCooldown[type];
+    int current = player->weaponDamageCooldown(type);
+    if (current > last)
+    {
+        enemyUnitCooldown[type] = current;
+        return current;
+    }
+
+    return last;
 }
 
 double InformationManager::getUnitTopSpeed(BWAPI::Player player, BWAPI::UnitType type)
 {
-    return getUpgradeTracker(player).getUnitTopSpeed(type);
+    if (player == BWAPI::Broodwar->self()) return player->topSpeed(type);
+
+    double last = enemyUnitTopSpeed[type];
+    double current = player->topSpeed(type);
+    if (current > last)
+    {
+        enemyUnitTopSpeed[type] = current;
+        return current;
+    }
+
+    return last;
 }
 
 int InformationManager::getUnitArmor(BWAPI::Player player, BWAPI::UnitType type)
 {
-    return getUpgradeTracker(player).getUnitArmor(type);
+    if (player == BWAPI::Broodwar->self()) return player->armor(type);
+
+    int last = enemyUnitArmor[type];
+    int current = player->armor(type);
+    if (current > last)
+    {
+        enemyUnitArmor[type] = current;
+        return current;
+    }
+
+    return last;
 }
 
 // Our nearest shield battery, by air distance.
 // Null if none.
+//我们最近的屏蔽电池，通过空中距离。
+//如果没有，则为空。
 BWAPI::Unit InformationManager::nearestShieldBattery(BWAPI::Position pos) const
 {
 	if (_self->getRace() == BWAPI::Races::Protoss)
@@ -2342,6 +2541,7 @@ int InformationManager::nScourgeNeeded()
 	return count;
 }
 
+//预测单位下一次的位置
 BWAPI::Position InformationManager::predictUnitPosition(BWAPI::Unit unit, int frames) const
 {
     if (!unit || !unit->exists() || !unit->isVisible()) return BWAPI::Positions::Invalid;
@@ -2355,6 +2555,80 @@ LocutusUnit& InformationManager::getLocutusUnit(BWAPI::Unit unit)
         _myUnits[unit] = LocutusUnit(unit);
 
     return _myUnits[unit];
+}
+
+double InformationManager::getFightScoreTimes() {
+	double times = 1.25;//战斗系数
+
+	if (BWAPI::Broodwar->enemy()->getRace() == BWAPI::Races::Protoss && ScoutManager::Instance().eyesOnEnemyBase()) {
+		int selfNexuses = UnitUtil::GetAllUnitCount(BWAPI::UnitTypes::Protoss_Nexus, _enemy);
+		int selfGateways = UnitUtil::GetAllUnitCount(BWAPI::UnitTypes::Protoss_Gateway, _enemy);
+
+		int enemyNexuses = UnitUtil::GetAllUnitCount(BWAPI::UnitTypes::Protoss_Nexus, _enemy);
+		int enemyGateways = UnitUtil::GetAllUnitCount(BWAPI::UnitTypes::Protoss_Gateway, _enemy);
+
+		if ((selfNexuses + selfGateways) > 0) {
+			times = (enemyNexuses + enemyGateways) / (selfNexuses + selfGateways);
+		}
+	}
+
+	return times;
+}
+
+bool InformationManager::canAggression() {
+
+	double times = getFightScoreTimes();
+
+	if (UnitUtil::GetCompletedUnitCount(BWAPI::UnitTypes::Protoss_Dark_Templar, _self) > 0 && UnitUtil::GetCompletedUnitCount(BWAPI::UnitTypes::Protoss_Observer, _enemy) == 0) {
+		times = 1.1;
+	}
+
+	return InformationManager::Instance().getSelfFightScore() > InformationManager::Instance().getEnemyFightScore() * times;
+}
+
+bool InformationManager::isEnemyMainBaseEliminated()
+{
+	if (getEnemyMainBaseLocation() == nullptr) return false;
+	if (isEnemyBuildingNearby(getEnemyMainBaseLocation()->getPosition(), 10)) return false;
+	return true;
+}
+
+bool InformationManager::isSneakTooLate()
+{
+	if (_sneakTooLate) return true;
+	for (auto unit : BWAPI::Broodwar->enemy()->getUnits())
+		if (unit->getType().isBuilding()
+			&& unit->getType().isDetector()
+			&& unit->isCompleted()
+			&& (unit->getHitPoints() + unit->getShields() > 120))
+		{
+			_sneakTooLate = true;
+		}
+	return _sneakTooLate;
+}
+
+BWAPI::Unitset InformationManager::getThreatingUnits(BWTA::BaseLocation * base)
+{
+	if (base == nullptr) base = getMyMainBaseLocation();
+	BWAPI::Unitset targets;
+	for (auto target : BWAPI::Broodwar->enemy()->getUnits())
+	{
+		if (target->getType() == BWAPI::UnitTypes::Unknown) continue;
+		int distance = target->getDistance(base->getPosition());
+		if ((distance < SIEGE_THREASHOLD)
+			&& (target->getType() == BWAPI::UnitTypes::Protoss_Dragoon
+			|| target->getType() == BWAPI::UnitTypes::Protoss_Zealot))
+		{
+			if (!targets.contains(target))
+				targets.insert(target);
+		}
+	}
+	return targets;
+}
+
+void InformationManager::sneak2Late()
+{
+	_sneakTooLate = true;
 }
 
 InformationManager & InformationManager::Instance()

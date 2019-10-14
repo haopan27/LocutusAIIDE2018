@@ -2,7 +2,7 @@
 
 #include "Common.h"
 
-namespace UAlbertaBot
+namespace DaQinBot
 {
 
 enum class MacroCommandType
@@ -11,7 +11,7 @@ enum class MacroCommandType
 	, ScoutIfNeeded
 	, ScoutLocation
 	, ScoutOnceOnly
-	, ScoutWhileSafe
+	, ScoutWhileSafe   // TODO unimplemented
 	, StealGas
 	, StartGas
 	, StopGas
@@ -19,15 +19,10 @@ enum class MacroCommandType
 	, ExtractorTrickDrone
 	, ExtractorTrickZergling
 	, Aggressive
-	, AggressiveAt
 	, Defensive
-	, Rushing
-	, Proxying
 	, PullWorkers
 	, PullWorkersLeaving
 	, ReleaseWorkers
-    , BlockEnemyScout
-    , WaitUntilEnemyLocationKnown
 	, Nonadaptive
 	, GiveUp
 	, QueueBarrier
@@ -37,6 +32,7 @@ class MacroCommand
 {
 	MacroCommandType	_type;
     int                 _amount;
+	BWAPI::UnitType		_unitType;
 
 public:
 
@@ -55,15 +51,10 @@ public:
 			, MacroCommandType::ExtractorTrickDrone
 			, MacroCommandType::ExtractorTrickZergling
 			, MacroCommandType::Aggressive
-			, MacroCommandType::AggressiveAt
 			, MacroCommandType::Defensive
-			, MacroCommandType::Rushing
-			, MacroCommandType::Proxying
 			, MacroCommandType::PullWorkers
 			, MacroCommandType::PullWorkersLeaving
 			, MacroCommandType::ReleaseWorkers
-			, MacroCommandType::BlockEnemyScout
-			, MacroCommandType::WaitUntilEnemyLocationKnown
 			, MacroCommandType::Nonadaptive
 			, MacroCommandType::GiveUp
 			, MacroCommandType::QueueBarrier
@@ -91,6 +82,14 @@ public:
 		UAB_ASSERT(hasArgument(type), "extra MacroCommand argument");
 	}
 
+	MacroCommand(MacroCommandType type, int amount, BWAPI::UnitType unitType)
+		: _type(type)
+		, _amount(amount)
+		, _unitType(unitType)
+	{
+		UAB_ASSERT(hasArgument(type), "extra MacroCommand argument");
+	}
+
     const int getAmount() const
     {
         return _amount;
@@ -101,12 +100,16 @@ public:
         return _type;
     }
 
+	const BWAPI::UnitType & getUnitType() const
+	{
+		return _unitType;
+	}
+
 	// The command has a numeric argument, the _amount.
 	static const bool hasArgument(MacroCommandType t)
 	{
 		return
 			t == MacroCommandType::GasUntil ||
-			t == MacroCommandType::AggressiveAt ||
 			t == MacroCommandType::PullWorkers || 
 			t == MacroCommandType::PullWorkersLeaving;
 	}
@@ -161,22 +164,10 @@ public:
 		{
 			return "go aggressive";
 		}
-		if (t == MacroCommandType::AggressiveAt)
-		{
-			return "go aggressive at";
-		}
 		if (t == MacroCommandType::Defensive)
 		{
 			return "go defensive";
 		}
-        if (t == MacroCommandType::Rushing)
-        {
-            return "go rush";
-        }
-        if (t == MacroCommandType::Proxying)
-        {
-            return "go proxy";
-        }
 		if (t == MacroCommandType::PullWorkers)
 		{
 			return "go pull workers";
@@ -188,14 +179,6 @@ public:
 		if (t == MacroCommandType::ReleaseWorkers)
 		{
 			return "go release workers";
-		}
-		if (t == MacroCommandType::BlockEnemyScout)
-		{
-			return "go block enemy scout";
-		}
-		if (t == MacroCommandType::WaitUntilEnemyLocationKnown)
-		{
-			return "go wait until enemy location known";
 		}
 		if (t == MacroCommandType::Nonadaptive)
 		{

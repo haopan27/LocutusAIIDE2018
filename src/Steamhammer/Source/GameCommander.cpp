@@ -4,7 +4,7 @@
 #include "UnitUtil.h"
 #include "PathFinding.h"
 
-using namespace UAlbertaBot;
+using namespace DaQinBot;
 
 //#define CRASH_DEBUG 1
 
@@ -450,7 +450,6 @@ void GameCommander::onUnitDestroy(BWAPI::Unit unit)
 	ProductionManager::Instance().onUnitDestroy(unit);
 	WorkerManager::Instance().onUnitDestroy(unit);
 	InformationManager::Instance().onUnitDestroy(unit); 
-	StrategyManager::Instance().onUnitDestroy(unit); 
 }
 
 void GameCommander::onUnitMorph(BWAPI::Unit unit)		
@@ -475,7 +474,7 @@ BWAPI::Unit GameCommander::getScoutWorker()
 			!unit->isCarryingGas() &&
 			unit->getOrder() != BWAPI::Orders::MiningMinerals)
 		{
-            int dist = PathFinding::GetGroundDistance(unit->getPosition(), mapCenter, unit->getType());
+            int dist = PathFinding::GetGroundDistance(unit->getPosition(), mapCenter);
 			if (dist < bestDist)
 			{
 				bestDist = dist;

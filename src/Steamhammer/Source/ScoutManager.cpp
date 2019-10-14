@@ -3,12 +3,11 @@
 #include "OpponentModel.h"
 #include "ProductionManager.h"
 #include "UnitUtil.h"
-#include "PathFinding.h"
 
 // This class is responsible for early game scouting.
 // It controls any scouting worker and scouting overlord that it is given.
 
-using namespace UAlbertaBot;
+using namespace DaQinBot;
 
 ScoutManager::ScoutManager() 
 	: _overlordScout(nullptr)
@@ -41,6 +40,10 @@ ScoutManager & ScoutManager::Instance()
 // After the enemy base is found, we unset the targets and go to or ignore the enemy base as appropriate.
 // If we have both an overlord and a worker, send them to search different places.
 // Guarantee: We only set a target if the scout for the target is set.
+//当我们还在寻找敌人基地时，目标位置已经确定。
+//在找到敌人的基地后，我们解除目标，并在适当的时候进入或忽略敌人的基地。
+//如果我们有一个领主和一个工人，就派他们到不同的地方去寻找。
+//保证:我们只有在侦察目标的时候才会设定目标。
 void ScoutManager::setScoutTargets()
 {
 	BWTA::BaseLocation * enemyBase = InformationManager::Instance().getEnemyMainBaseLocation();
@@ -124,6 +127,7 @@ bool ScoutManager::shouldScout()
 void ScoutManager::update()
 {
     // We may have active harass pylons after the scout is dead, so always update them
+	//侦察兵死后，我们可能会有活跃的骚扰塔，所以要经常更新它们
     updatePylonHarassState();
 
 	// If we're not scouting now, minimum effort.
@@ -390,6 +394,16 @@ void ScoutManager::moveGroundScout(BWAPI::Unit scout)
 		const BWTA::BaseLocation * enemyBaseLocation = InformationManager::Instance().getEnemyMainBaseLocation();
 
 		UAB_ASSERT(enemyBaseLocation, "no enemy base");
+
+		/*
+		BWAPI::Unitset closestEnemys = scout->getUnitsInRadius(6 * 32, BWAPI::Filter::IsEnemy && BWAPI::Filter::CanAttack);
+		for (const auto closestEnemy : closestEnemys) {
+			if (closestEnemy && UnitUtil::CanAttack(closestEnemy, scout) && closestEnemy->getOrderTarget() == scout) {
+				InformationManager::Instance().getLocutusUnit(scout).fleeFrom(closestEnemy->getPosition());
+				return;
+			}
+		}
+		*/
 
 		int scoutDistanceToEnemy = MapTools::Instance().getGroundTileDistance(scout->getPosition(), enemyBaseLocation->getPosition());
 		bool scoutInRangeOfenemy = scoutDistanceToEnemy <= scoutDistanceThreshold;
@@ -736,134 +750,97 @@ BWAPI::Position ScoutManager::getFleePosition()
 //      are found deep inside the enemy base.
 // TODO Eventually replace with real-time pathing that tries to see as much as possible
 //      while remaining safe.
+//注意，当不可构建块时，这个算法有时会产生奇怪的路径
+//在敌人基地的深处。
+// TODO最终会被实时pathing所取代，它会尽可能多地查看内容
+//同时保持安全。
 void ScoutManager::calculateEnemyRegionVertices()
 {
     BWTA::BaseLocation * enemyBaseLocation = InformationManager::Instance().getEnemyMainBaseLocation();
-    if (!enemyBaseLocation) return;
 
-    std::vector<BWAPI::Position> enemyMainVertices = calculateScoutVerticesForBase(enemyBaseLocation);
-    std::vector<BWAPI::Position> enemyNaturalVertices = calculateScoutVerticesForBase(InformationManager::Instance().getEnemyNaturalLocation());
-
-    // Splice the two together where they have vertices closest to each other
-    if (!enemyMainVertices.empty() && !enemyNaturalVertices.empty())
+    if (!enemyBaseLocation)
     {
-        int bestDist = INT_MAX;
-        std::vector<BWAPI::Position>::iterator bestMain = enemyMainVertices.end();
-        std::vector<BWAPI::Position>::iterator bestNatural = enemyNaturalVertices.end();
-        for (auto mainIt = enemyMainVertices.begin(); mainIt != enemyMainVertices.end(); mainIt++)
-            for (auto naturalIt = enemyNaturalVertices.begin(); naturalIt != enemyNaturalVertices.end(); naturalIt++)
-            {
-                int dist = PathFinding::GetGroundDistance(*mainIt, *naturalIt, BWAPI::UnitTypes::Protoss_Probe, PathFinding::PathFindingOptions::UseNearestBWEMArea);
-                if (dist < bestDist)
-                {
-                    bestDist = dist;
-                    bestMain = mainIt;
-                    bestNatural = naturalIt;
-                }
-            }
-
-        if (bestMain != enemyMainVertices.end() && bestNatural != enemyNaturalVertices.end())
-        {
-            std::vector<BWAPI::Position> result;
-            for (auto mainIt = enemyMainVertices.begin(); mainIt != enemyMainVertices.end(); mainIt++)
-            {
-                result.push_back(*mainIt);
-                if (mainIt != bestMain) continue;
-
-                for (auto naturalIt = bestNatural; naturalIt != enemyNaturalVertices.end(); naturalIt++)
-                    result.push_back(*naturalIt);
-
-                for (auto naturalIt = enemyNaturalVertices.begin(); naturalIt != bestNatural; naturalIt++)
-                    result.push_back(*naturalIt);
-
-                result.push_back(*bestNatural);
-                result.push_back(*bestMain);
-            }
-
-            enemyMainVertices = result;
-        }
+        return;
     }
 
-    _enemyRegionVertices = enemyMainVertices;
+    BWTA::Region * enemyRegion = enemyBaseLocation->getRegion();
 
-    // Set the initial index to the vertex closest to the enemy main, so we get scouting information as soon as possible
-    double bestDist = 1000000;
-    for (size_t i = 0; i < enemyMainVertices.size(); i++)
+    if (!enemyRegion)
     {
-        double dist = enemyMainVertices[i].getDistance(enemyBaseLocation->getPosition());
-        if (dist < bestDist)
-        {
-            bestDist = dist;
-            _currentRegionVertexIndex = i;
-        }
+        return;
     }
-}
 
-std::vector<BWAPI::Position> ScoutManager::calculateScoutVerticesForBase(BWTA::BaseLocation * base) 
-{
-    if (!base) return {};
+	const BWAPI::Position enemyCenter = BWAPI::Position(enemyBaseLocation->getTilePosition()) + BWAPI::Position(64, 48);
 
-    auto region = base->getRegion();
-    if (!region) return {};
-
-    const std::vector<BWAPI::TilePosition> & closestToBase = 
-        MapTools::Instance().getClosestTilesTo(InformationManager::Instance().getMyMainBaseLocation()->getPosition());
+    const BWAPI::Position basePosition = BWAPI::Position(BWAPI::Broodwar->self()->getStartLocation());
+    const std::vector<BWAPI::TilePosition> & closestTobase = MapTools::Instance().getClosestTilesTo(basePosition);
 
     std::set<BWAPI::Position> unsortedVertices;
 
     // check each tile position
-    for (size_t i(0); i < closestToBase.size(); ++i)
-    {
-        const BWAPI::TilePosition & tp = closestToBase[i];
+	for (size_t i(0); i < closestTobase.size(); ++i)
+	{
+		const BWAPI::TilePosition & tp = closestTobase[i];
 
-        if (BWTA::getRegion(tp) != region)
-        {
-            continue;
-        }
+		if (BWTA::getRegion(tp) != enemyRegion)
+		{
+			continue;
+		}
 
-        // a tile is 'on an edge' unless
-        // 1) in all 4 directions there's a tile position in the current region
-        // 2) in all 4 directions there's a buildable tile
-        bool edge =
-            BWTA::getRegion(BWAPI::TilePosition(tp.x + 1, tp.y)) != region || !BWAPI::Broodwar->isBuildable(BWAPI::TilePosition(tp.x + 1, tp.y))
-            || BWTA::getRegion(BWAPI::TilePosition(tp.x, tp.y + 1)) != region || !BWAPI::Broodwar->isBuildable(BWAPI::TilePosition(tp.x, tp.y + 1))
-            || BWTA::getRegion(BWAPI::TilePosition(tp.x - 1, tp.y)) != region || !BWAPI::Broodwar->isBuildable(BWAPI::TilePosition(tp.x - 1, tp.y))
-            || BWTA::getRegion(BWAPI::TilePosition(tp.x, tp.y - 1)) != region || !BWAPI::Broodwar->isBuildable(BWAPI::TilePosition(tp.x, tp.y - 1));
+		// a tile is 'on an edge' unless
+		// 1) in all 4 directions there's a tile position in the current region
+		// 2) in all 4 directions there's a buildable tile
+		bool edge =
+			   BWTA::getRegion(BWAPI::TilePosition(tp.x + 1, tp.y)) != enemyRegion || !BWAPI::Broodwar->isBuildable(BWAPI::TilePosition(tp.x + 1, tp.y))
+			|| BWTA::getRegion(BWAPI::TilePosition(tp.x, tp.y + 1)) != enemyRegion || !BWAPI::Broodwar->isBuildable(BWAPI::TilePosition(tp.x, tp.y + 1))
+			|| BWTA::getRegion(BWAPI::TilePosition(tp.x - 1, tp.y)) != enemyRegion || !BWAPI::Broodwar->isBuildable(BWAPI::TilePosition(tp.x - 1, tp.y))
+			|| BWTA::getRegion(BWAPI::TilePosition(tp.x, tp.y - 1)) != enemyRegion || !BWAPI::Broodwar->isBuildable(BWAPI::TilePosition(tp.x, tp.y - 1));
 
-        // push the tiles that aren't surrounded
-        if (edge && BWAPI::Broodwar->isBuildable(tp))
-        {
-            BWAPI::Position vertex = BWAPI::Position(tp) + BWAPI::Position(16, 16);
+		// push the tiles that aren't surrounded
+		if (edge && BWAPI::Broodwar->isBuildable(tp))
+		{
+			if (Config::Debug::DrawScoutInfo)
+			{
+				int x1 = tp.x * 32 + 2;
+				int y1 = tp.y * 32 + 2;
+				int x2 = (tp.x + 1) * 32 - 2;
+				int y2 = (tp.y + 1) * 32 - 2;
 
-            // Pull the vertex towards the base center, unless it is already within 12 tiles
-            int dist = base->getPosition().getApproxDistance(vertex);
-            if (dist > 384)
-            {
-                int pullBy = std::min(dist - 384, 192);
+				BWAPI::Broodwar->drawTextMap(x1 + 3, y1 + 2, "%d", MapTools::Instance().getGroundTileDistance(BWAPI::Position(tp), basePosition));
+				BWAPI::Broodwar->drawBoxMap(x1, y1, x2, y2, BWAPI::Colors::Green, false);
+			}
 
-                // Special case where the slope is infinite
-                if (vertex.x == base->getPosition().x)
-                {
-                    vertex = vertex + BWAPI::Position(0, vertex.y > base->getPosition().y ? -pullBy : pullBy);
-                }
-                else
-                {
-                    // First get the slope, m = (y1 - y0)/(x1 - x0)
-                    double m = double(base->getPosition().y - vertex.y) / double(base->getPosition().x - vertex.x);
+			BWAPI::Position vertex = BWAPI::Position(tp) + BWAPI::Position(16, 16);
 
-                    // Now the equation for a new x is x0 +- d/sqrt(1 + m^2)
-                    double x = vertex.x + (vertex.x > base->getPosition().x ? -1.0 : 1.0) * pullBy / (sqrt(1 + m * m));
+			// Pull the vertex towards the enemy base center, unless it is already within 12 tiles
+			double dist = enemyCenter.getDistance(vertex);
+			if (dist > 384.0)
+			{
+				double pullBy = std::min(dist - 384.0, 120.0);
 
-                    // And y is m(x - x0) + y0
-                    double y = m * (x - vertex.x) + vertex.y;
+				// Special case where the slope is infinite
+				if (vertex.x == enemyCenter.x)
+				{
+					vertex = vertex + BWAPI::Position(0, vertex.y > enemyCenter.y ? -pullBy : pullBy);
+				}
+				else
+				{
+					// First get the slope, m = (y1 - y0)/(x1 - x0)
+					double m = double(enemyCenter.y - vertex.y) / double(enemyCenter.x - vertex.x);
 
-                    vertex = BWAPI::Position(x, y);
-                }
-            }
+					// Now the equation for a new x is x0 +- d/sqrt(1 + m^2)
+					double x = vertex.x + (vertex.x > enemyCenter.x ? -1.0 : 1.0) * pullBy / (sqrt(1 + m * m));
 
-            unsortedVertices.insert(vertex);
-        }
-    }
+					// And y is m(x - x0) + y0
+					double y = m * (x - vertex.x) + vertex.y;
+
+					vertex = BWAPI::Position(x, y);
+				}
+			}
+
+			unsortedVertices.insert(vertex);
+		}
+	}
 
     std::vector<BWAPI::Position> sortedVertices;
     BWAPI::Position current = *unsortedVertices.begin();
@@ -910,10 +887,10 @@ std::vector<BWAPI::Position> ScoutManager::calculateScoutVerticesForBase(BWTA::B
             int farthestIndex = 0;
 
             // only test half way around because we'll find the other one on the way back
-            for (size_t j(1); j < sortedVertices.size() / 2; ++j)
+            for (size_t j(1); j < sortedVertices.size()/2; ++j)
             {
                 int jindex = (i + j) % sortedVertices.size();
-
+            
                 if (sortedVertices[i].getDistance(sortedVertices[jindex]) < distanceThreshold)
                 {
                     farthest = j;
@@ -928,7 +905,7 @@ std::vector<BWAPI::Position> ScoutManager::calculateScoutVerticesForBase(BWTA::B
                 maxFarthestEnd = farthestIndex;
             }
         }
-
+        
         // stop when we have no long chains within the threshold
         if (maxFarthest < 4)
         {
@@ -937,7 +914,7 @@ std::vector<BWAPI::Position> ScoutManager::calculateScoutVerticesForBase(BWTA::B
 
         std::vector<BWAPI::Position> temp;
 
-        for (size_t s(maxFarthestEnd); s != maxFarthestStart; s = (s + 1) % sortedVertices.size())
+        for (size_t s(maxFarthestEnd); s != maxFarthestStart; s = (s+1) % sortedVertices.size())
         {
             temp.push_back(sortedVertices[s]);
         }
@@ -945,9 +922,22 @@ std::vector<BWAPI::Position> ScoutManager::calculateScoutVerticesForBase(BWTA::B
         sortedVertices = temp;
     }
 
-    return sortedVertices;
+    _enemyRegionVertices = sortedVertices;
+
+    // Set the initial index to the vertex closest to the enemy main, so we get scouting information as soon as possible
+    double bestDist = 1000000;
+    for (size_t i = 0; i < sortedVertices.size(); i++)
+    {
+        double dist = sortedVertices[i].getDistance(enemyCenter);
+        if (dist < bestDist)
+        {
+            bestDist = dist;
+            _currentRegionVertexIndex = i;
+        }
+    }
 }
 
+//更新水晶骚扰状态
 void ScoutManager::updatePylonHarassState()
 {
     for (auto it = _activeHarassPylons.begin(); it != _activeHarassPylons.end(); )
@@ -1031,6 +1021,7 @@ void ScoutManager::updatePylonHarassState()
         }
 
         // If the pylon is almost finished building and has been attacked by multiple workers, cancel it
+		//如果塔快要建好了，又受到几个工人的攻击，就把它拆除
         if (it->unit->isBeingConstructed() && it->attackedBy.size() > 1 &&
             it->unit->getRemainingBuildTime() <= (BWAPI::Broodwar->getRemainingLatencyFrames() + 5))
         {
@@ -1041,6 +1032,7 @@ void ScoutManager::updatePylonHarassState()
     }
 }
 
+//水晶骚扰
 bool ScoutManager::pylonHarass()
 {
     if (_pylonHarassState == PylonHarassStates::Finished)
@@ -1122,9 +1114,7 @@ bool ScoutManager::pylonHarass()
         // Lure if:
         // - We have never lured before, OR
         // - Our previous lure pylon caused a reacton from enemy workers
-        // Currently only enabled for Iron, most other good bots have adapted so this doesn't really help
-        else if (lureCausesEnemyWorkerReaction
-            && InformationManager::Instance().getEnemyName().find("iron") != std::string::npos)
+        else if (lureCausesEnemyWorkerReaction)
         {
             _pylonHarassState = PylonHarassStates::ReadyForLure;
         }
@@ -1245,6 +1235,7 @@ bool ScoutManager::pylonHarass()
         }
 
         // We're in position. Issue the build when the patch is being mined and nothing is in the way.
+		//我们已经就位。当补丁被挖掘并且没有任何阻碍时，发出构建。
         bool isBeingMined = false;
         bool workerInTheWay = false;
         for (auto const & unit : BWAPI::Broodwar->enemy()->getUnits())

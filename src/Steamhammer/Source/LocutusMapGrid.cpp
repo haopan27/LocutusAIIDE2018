@@ -3,7 +3,7 @@
 #include "InformationManager.h"
 #include "MathUtil.h"
 
-using namespace UAlbertaBot;
+using namespace DaQinBot;
 
 // We add a buffer on detection and threat ranges
 // Generally this is more useful as it forces our units to keep their distance

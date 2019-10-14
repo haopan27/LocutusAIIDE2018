@@ -3,9 +3,8 @@
 #include <Common.h>
 #include "BuildingManager.h"
 #include "WorkerData.h"
-#include "MacroAct.h"
 
-namespace UAlbertaBot
+namespace DaQinBot
 {
 class Building;
 
@@ -14,7 +13,6 @@ class WorkerManager
     WorkerData  workerData;
     BWAPI::Unit previousClosestWorker;
 	bool		_collectGas;
-    BWAPI::Unit proxyBuilder;
 
 	void        setMineralWorker(BWAPI::Unit unit);
 	void        setReturnCargoWorker(BWAPI::Unit unit);
@@ -70,7 +68,7 @@ public:
     bool        isBuilder(BWAPI::Unit worker);
 
     BWAPI::Unit getBuilder(const Building & b,bool setJobAsBuilder = true);
-    BWAPI::Unit getMoveWorker(BWAPI::Position p, MacroLocation macroLocation);
+    BWAPI::Unit getMoveWorker(BWAPI::Position p);
     BWAPI::Unit getGasWorker(BWAPI::Unit refinery);
     BWAPI::Unit getClosestMineralWorkerTo(BWAPI::Unit enemyUnit);
     BWAPI::Unit getWorkerScout();

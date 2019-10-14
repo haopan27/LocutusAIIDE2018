@@ -12,7 +12,7 @@
 // Parse manual commands.
 // Provide a few simple parsing routines for wider use.
 
-using namespace UAlbertaBot;
+using namespace DaQinBot;
 
 // Parse the JSON configuration file into Config:: variables.
 void ParseUtils::ParseConfigFile(const std::string & filename)
@@ -121,6 +121,7 @@ void ParseUtils::ParseConfigFile(const std::string & filename)
         JSONTools::ReadBool("DrawMouseCursorInfo", debug, Config::Debug::DrawMouseCursorInfo);
         JSONTools::ReadBool("DrawEnemyUnitInfo", debug, Config::Debug::DrawEnemyUnitInfo);
         JSONTools::ReadBool("DrawMapInfo", debug, Config::Debug::DrawMapInfo);
+		JSONTools::ReadBool("DrawBWTAInfo", debug, Config::Debug::DrawBWTAInfo);
         JSONTools::ReadBool("DrawMapGrid", debug, Config::Debug::DrawMapGrid);
 		JSONTools::ReadBool("DrawMapDistances", debug, Config::Debug::DrawMapDistances);
 		JSONTools::ReadBool("DrawBaseInfo", debug, Config::Debug::DrawBaseInfo);
@@ -171,7 +172,6 @@ void ParseUtils::ParseConfigFile(const std::string & filename)
 
 		Config::Strategy::ScoutHarassEnemy = GetBoolByRace("ScoutHarassEnemy", strategy);
 		Config::Strategy::AutoGasSteal = GetBoolByRace("AutoGasSteal", strategy);
-        if (!Config::Strategy::AutoGasSteal) OpponentModel::Instance().setRecommendGasSteal(false);
 		Config::Strategy::RandomGasStealRate = GetDoubleByRace("RandomGasStealRate", strategy);
 		Config::Strategy::UsePlanRecognizer = GetBoolByRace("UsePlanRecognizer", strategy);
 		Config::Strategy::SurrenderWhenHopeIsLost = GetBoolByRace("SurrenderWhenHopeIsLost", strategy);
@@ -453,7 +453,8 @@ void ParseUtils::ParseTextCommand(const std::string & commandString)
         else if (variableName == "drawunittargetinfo") { Config::Debug::DrawUnitTargetInfo = GetBoolFromString(val); }
 		else if (variableName == "drawunitorders") { Config::Debug::DrawUnitOrders = GetBoolFromString(val); }
 		else if (variableName == "drawmapinfo") { Config::Debug::DrawMapInfo = GetBoolFromString(val); }
-        else if (variableName == "drawmapgrid") { Config::Debug::DrawMapGrid = GetBoolFromString(val); }
+		else if (variableName == "drawbwtainfo") { Config::Debug::DrawBWTAInfo = GetBoolFromString(val); }
+		else if (variableName == "drawmapgrid") { Config::Debug::DrawMapGrid = GetBoolFromString(val); }
 		else if (variableName == "drawmapdistances") { Config::Debug::DrawMapDistances = GetBoolFromString(val); }
 		else if (variableName == "drawbaseinfo") { Config::Debug::DrawBaseInfo = GetBoolFromString(val); }
 		else if (variableName == "drawstrategybossinfo") { Config::Debug::DrawStrategyBossInfo = GetBoolFromString(val); }
@@ -534,89 +535,76 @@ bool ParseUtils::_ParseStrategy(
 		{
 			const rapidjson::Value & mix = item[raceString.c_str()];
 
-            std::vector<std::string> strategies;    // strategy name
-            std::vector<int> weights;               // weight of strategy
-            int totalWeight = 0;                    // cumulative weight of all strategies
-            int maxWeight = 0;                      // max weight of any strategy
+			std::vector<int> weights;               // weight of strategy
+			int totalWeight = 0;                    // cumulative weight of all strategies
 
-            // 1. Collect the weights and strategies.
-            for (size_t i(0); i < mix.Size(); ++i)
-            {
-                if (mix[i].IsObject() &&
-                    mix[i].HasMember("Strategy") && mix[i]["Strategy"].IsString())
-                {
-                    int weight;
-                    if (mix[i].HasMember(mapWeightString.c_str()) && mix[i][mapWeightString.c_str()].IsInt())
-                    {
-                        weight = mix[i][mapWeightString.c_str()].GetInt();
-                    }
-                    else if (mix[i].HasMember("Weight") && mix[i]["Weight"].IsInt())
-                    {
-                        weight = mix[i]["Weight"].GetInt();
-                    }
-                    else
-                    {
-                        continue;
-                    }
+			// 1. Collect the strategies with the highest weight
+            std::vector<std::string> strategies;
+            int highestWeight = 0;
+			for (size_t i(0); i < mix.Size(); ++i)
+			{
+				if (mix[i].IsObject() &&
+					mix[i].HasMember("Strategy") && mix[i]["Strategy"].IsString())
+				{
+					int weight;
+					if (mix[i].HasMember(mapWeightString.c_str()) && mix[i][mapWeightString.c_str()].IsInt())
+					{
+						weight = mix[i][mapWeightString.c_str()].GetInt();
+					}
+					else if (mix[i].HasMember("Weight") && mix[i]["Weight"].IsInt())
+					{
+						weight = mix[i]["Weight"].GetInt();
+					}
+					else
+					{
+						continue;
+					}
 
                     // If we've used this strategy before, adjust the weight based on the result
-                    std::string strategy = mix[i]["Strategy"].GetString();
+					std::string strategy = mix[i]["Strategy"].GetString();
                     if (strategyWeightFactors.find(strategy) != strategyWeightFactors.end())
-                        weight = (int)std::round(strategyWeightFactors[strategy] * (double)weight);
+                        weight *= strategyWeightFactors[strategy];
 
-                    weight = std::max(1, weight);
+                    // Strategies that have always won are given a * 100 boost (see OpponentModel)
+                    // Here, we give strategies that we have never played a * 50 boost, so we are sure
+                    // to try them once when other strategies start losing
+                    // (only enabled for tournaments, not ladders)
+                    /*
+                    else
+                        weight *= 50;
+                    */
+
+                    Log().Get() << "Considering " << strategy << " with weight " << weight;
 
                     // If we are in training mode, all strategies are equal
                     if (Config::Strategy::TrainingMode)
                         weight = 1;
 
-                    strategies.push_back(strategy);
-                    totalWeight += weight;
-                    weights.push_back(weight);
+                    // If this strategy has the same weight as the current highest, add it to the vector
+                    if (weight == highestWeight)
+                    {
+                        strategies.push_back(strategy);
+                    }
+                    else if (weight > highestWeight)
+                    {
+                        strategies.clear();
+                        strategies.push_back(strategy);
+                        highestWeight = weight;
+                    }
+				}
+				else
+				{
+					return false;
+				}
+			}
 
-                    if (weight > maxWeight) maxWeight = weight;
-                }
-                else
-                {
-                    return false;
-                }
-            }
+            UAB_ASSERT(!strategies.empty(), "No best strategy found");
 
-            // 2. Remove strategies that are below 50% of the maximum weight
-            int cutoff = maxWeight / 2;
-            auto weightsIter = weights.begin();
-            auto stratsIter = strategies.begin();
-            while (weightsIter != weights.end())
-            {
-                if (*weightsIter < cutoff)
-                {
-                    totalWeight -= *weightsIter;
-                    weightsIter = weights.erase(weightsIter);
-                    stratsIter = strategies.erase(stratsIter);
-                }
-                else
-                {
-                    Log().Get() << "Considering " << *stratsIter << " with weight " << *weightsIter;
-
-                    weightsIter++;
-                    stratsIter++;
-                }
-            }
-
-            // 3. Choose a strategy at random by weight.
-            int accum = 0;
-            int w = Random::Instance().index(totalWeight);
-            for (size_t i = 0; i < weights.size(); ++i)
-            {
-                accum += weights[i];
-                if (w < accum)
-                {
-                    stratName = strategies[i];
-                    return _LookUpStrategyCombo(item, stratName, mapWeightString, raceString, strategyCombos, strategyWeightFactors);
-                }
-            }
-            UAB_ASSERT(false, "random strategy fell through");
-        }
+            // 2. Choose one of them at random
+            int i = Random::Instance().index(strategies.size());
+            stratName = strategies[i];
+            return _LookUpStrategyCombo(item, stratName, mapWeightString, raceString, strategyCombos, strategyWeightFactors);
+		}
 	}
 
 	return false;

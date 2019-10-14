@@ -4,7 +4,7 @@
 
 //#define FAP_DEBUG 1
 
-namespace UAlbertaBot {
+namespace DaQinBot {
 
     struct FastAPproximation {
         struct FAPUnit {
@@ -100,4 +100,4 @@ namespace UAlbertaBot {
 
 }
 
-extern UAlbertaBot::FastAPproximation fap;
+extern DaQinBot::FastAPproximation fap;

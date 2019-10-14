@@ -6,7 +6,7 @@
 #include "MacroAct.h"
 #include "MapTools.h"
 
-namespace UAlbertaBot
+namespace DaQinBot
 {
 class BuildingManager
 {
@@ -33,6 +33,7 @@ class BuildingManager
 	void			checkReservedResources();				// error check
 
 	bool			buildingTimedOut(const Building & b) const;
+	bool			checkBuildingTiles(Building & b);
     char            getBuildingWorkerCode(const Building & b) const;
 
 	void			setBuilderUnit(Building & b);
@@ -58,7 +59,7 @@ public:
 
 	bool				anythingBeingBuilt() const { return !_buildings.empty(); };
     bool                isBeingBuilt(BWAPI::UnitType type) const;
-    int                 numBeingBuilt(BWAPI::UnitType type) const;
+    int                 getNumBeingBuilt(BWAPI::UnitType type) const;
 	size_t              getNumUnstarted() const;
 	size_t              getNumUnstarted(BWAPI::UnitType type) const;
 	
