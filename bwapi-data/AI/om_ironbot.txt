@@ -1,0 +1,4000 @@
+2018-07-02
+PvT
+(4)Icarus.scm
+10-15GateGoon
+Not fast rush
+Unknown
+1
+0
+0
+0
+5310
+0
+0
+3646
+0
+0
+0
+10945
+0
+END GAME
+2018-07-02
+PvT
+(4)Circuit Breaker.scx
+10-15GateGoon
+Not fast rush
+Not fast rush
+1
+0
+0
+3102
+3998
+0
+0
+3934
+0
+0
+0
+10728
+0
+END GAME
+2018-07-02
+PvT
+(3)Neo Moon Glaive.scx
+10-15GateGoon
+Not fast rush
+Not fast rush
+1
+0
+0
+3998
+3806
+0
+0
+2910
+0
+0
+0
+8713
+0
+END GAME
+2018-07-02
+PvT
+(4)Python.scx
+10-15GateGoon
+Not fast rush
+Unknown
+1
+0
+0
+4510
+4638
+0
+0
+4638
+0
+0
+0
+12774
+0
+END GAME
+2018-07-02
+PvT
+(2)Benzene.scx
+10-15GateGoon
+Not fast rush
+Not fast rush
+1
+0
+0
+4286
+5438
+0
+0
+3134
+0
+0
+0
+10201
+0
+END GAME
+2018-07-02
+PvT
+(4)Empire of the Sun.scm
+10-15GateGoon
+Not fast rush
+Not fast rush
+1
+0
+0
+2654
+5566
+0
+0
+4990
+0
+0
+0
+10108
+0
+END GAME
+2018-07-02
+PvT
+(3)Tau Cross.scx
+10-15GateGoon
+Not fast rush
+Not fast rush
+1
+0
+0
+4158
+3742
+11166
+0
+2942
+0
+11710
+0
+17362
+0
+END GAME
+2018-07-02
+PvT
+(4)Empire of the Sun.scm
+10-15GateGoon
+Not fast rush
+Not fast rush
+1
+0
+0
+2686
+5758
+0
+0
+3806
+0
+0
+0
+8651
+0
+END GAME
+2018-07-02
+PvT
+(4)Python.scx
+10-15GateGoon
+Not fast rush
+Not fast rush
+1
+0
+0
+2494
+3678
+0
+0
+3646
+0
+0
+0
+10263
+0
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10-15GateGoon
+Not fast rush
+Not fast rush
+0
+0
+0
+5086
+3838
+17438
+30974
+2846
+17438
+12702
+20766
+31837
+0
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10-15GateGoon
+Not fast rush
+Not fast rush
+1
+0
+0
+3902
+3678
+0
+0
+2750
+0
+0
+0
+9116
+0
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10-15GateGoon
+Not fast rush
+Unknown
+1
+0
+0
+5342
+4062
+11614
+21598
+4062
+14206
+12894
+17438
+38907
+0
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10-15GateGoon
+Not fast rush
+Not fast rush
+1
+0
+0
+3934
+3678
+0
+0
+2686
+0
+0
+0
+8961
+0
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10-15GateGoon
+Not fast rush
+Unknown
+0
+0
+0
+5982
+5982
+12350
+17758
+5022
+12350
+12286
+15582
+28150
+0
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10-15GateGoon
+Not fast rush
+Unknown
+1
+0
+0
+6206
+5470
+0
+0
+3774
+0
+0
+0
+11224
+0
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10-15GateGoon
+Not fast rush
+Unknown
+1
+0
+0
+6110
+3870
+0
+0
+3870
+0
+0
+0
+9767
+0
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10-15GateGoon
+Not fast rush
+Unknown
+1
+0
+0
+4094
+5182
+0
+0
+3934
+0
+0
+0
+8713
+0
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10-15GateGoon
+Not fast rush
+Unknown
+1
+0
+0
+0
+5534
+0
+0
+3774
+0
+0
+0
+11782
+0
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10-15GateGoon
+Not fast rush
+Unknown
+0
+0
+0
+3838
+5246
+12382
+16894
+5246
+12382
+10654
+16478
+25117
+0
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10-15GateGoon
+Not fast rush
+Unknown
+1
+0
+0
+6494
+5470
+0
+0
+3774
+0
+0
+0
+11286
+0
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10-15GateGoon
+Not fast rush
+Unknown
+1
+0
+0
+7550
+4638
+0
+0
+4638
+0
+0
+0
+11224
+0
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10-15GateGoon
+Not fast rush
+Unknown
+1
+0
+0
+3902
+4830
+14366
+13854
+4830
+14366
+12286
+17758
+23159
+0
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10-15GateGoon
+Not fast rush
+Unknown
+1
+0
+0
+5054
+4062
+0
+0
+4062
+0
+0
+0
+10449
+0
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10-15GateGoon
+Not fast rush
+Unknown
+1
+0
+0
+3902
+3966
+0
+0
+3934
+0
+0
+0
+9178
+0
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10-15GateGoon
+Not fast rush
+Unknown
+0
+0
+0
+6046
+5470
+15038
+21246
+3774
+15038
+10846
+18078
+44677
+0
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10-15GateGoon
+Not fast rush
+Unknown
+1
+0
+0
+0
+4606
+0
+0
+4606
+0
+0
+0
+8961
+0
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10-15GateGoon
+Not fast rush
+Not fast rush
+1
+0
+0
+5342
+4062
+0
+0
+3998
+0
+0
+0
+10139
+0
+END GAME
+2018-07-02
+PvT
+(3)Neo Moon Glaive.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+3870
+4254
+0
+0
+2110
+0
+0
+0
+11627
+80
+END GAME
+2018-07-02
+PvT
+(3)Neo Moon Glaive.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+4062
+5246
+0
+0
+2846
+0
+7614
+0
+20586
+0
+END GAME
+2018-07-02
+PvT
+(2)Heartbreak Ridge.scx
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+0
+0
+2846
+6078
+15614
+15934
+2206
+15614
+12926
+13438
+26786
+0
+END GAME
+2018-07-02
+PvT
+(4)Roadrunner.scx
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+0
+0
+7230
+4350
+13630
+0
+4350
+13630
+12606
+17150
+20648
+0
+END GAME
+2018-07-02
+PvT
+(2)Destination.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+3998
+4350
+0
+0
+2110
+0
+9246
+0
+12464
+80
+END GAME
+2018-07-02
+PvT
+(2)Destination.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+3998
+6494
+0
+0
+2110
+0
+10046
+0
+11472
+80
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10Gate25NexusFE
+Not fast rush
+Unknown
+0
+0
+0
+14942
+4126
+12926
+18558
+4126
+12926
+12286
+17406
+32317
+0
+END GAME
+2018-07-02
+PvT
+(4)Empire of the Sun.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+4382
+6494
+0
+0
+2238
+0
+0
+0
+10015
+80
+END GAME
+2018-07-02
+PvT
+(2)Heartbreak Ridge.scx
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+0
+0
+2878
+6110
+11870
+0
+2174
+11870
+13214
+15230
+18013
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+0
+0
+3870
+4414
+12990
+0
+4414
+12990
+10398
+16254
+23655
+0
+END GAME
+2018-07-02
+PvT
+(4)Empire of the Sun.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+2622
+6206
+0
+0
+2174
+0
+0
+0
+9302
+80
+END GAME
+2018-07-02
+PvT
+(4)Roadrunner.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+6238
+5438
+0
+0
+2142
+0
+8830
+0
+19749
+0
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+4062
+7934
+0
+0
+2110
+0
+0
+0
+10604
+80
+END GAME
+2018-07-02
+PvT
+(3)Neo Moon Glaive.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+3934
+3678
+11934
+18334
+3134
+11934
+11486
+15422
+28646
+0
+END GAME
+2018-07-02
+PvT
+(3)Tau Cross.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+4158
+7166
+0
+0
+2270
+0
+0
+0
+11968
+80
+END GAME
+2018-07-02
+PvT
+(2)Benzene.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+4318
+6686
+0
+0
+2398
+0
+8830
+0
+10542
+80
+END GAME
+2018-07-02
+PvT
+(3)Tau Cross.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+4062
+4510
+0
+0
+2270
+0
+0
+0
+9519
+80
+END GAME
+2018-07-02
+PvT
+(4)Andromeda.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+0
+5950
+0
+0
+3198
+0
+0
+0
+12805
+0
+END GAME
+2018-07-02
+PvT
+(4)Python.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+4030
+6206
+0
+0
+2302
+0
+8766
+0
+13921
+80
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+3806
+6590
+0
+0
+2142
+0
+0
+0
+11193
+80
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+0
+0
+4030
+4094
+0
+0
+4094
+0
+7518
+0
+17300
+0
+END GAME
+2018-07-02
+PvT
+(4)Jade.scx
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+0
+0
+2782
+5918
+0
+0
+4318
+0
+0
+0
+9612
+0
+END GAME
+2018-07-02
+PvT
+(2)Destination.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+3998
+6686
+0
+0
+2110
+0
+9246
+0
+10449
+80
+END GAME
+2018-07-02
+PvT
+(4)Andromeda.scx
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+0
+0
+7422
+4222
+0
+0
+4222
+0
+0
+0
+12526
+0
+END GAME
+2018-07-02
+PvT
+(2)Benzene.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+4350
+5310
+15870
+0
+2462
+15870
+14014
+19070
+21175
+0
+END GAME
+2018-07-02
+PvT
+(4)Empire of the Sun.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+2590
+5918
+0
+0
+2174
+0
+0
+0
+10666
+80
+END GAME
+2018-07-02
+PvT
+(2)Destination.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+4030
+3806
+0
+0
+2206
+0
+9534
+0
+11286
+80
+END GAME
+2018-07-02
+PvT
+(4)Empire of the Sun.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+2654
+5470
+0
+0
+4318
+0
+7454
+0
+11782
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+5950
+3806
+12862
+0
+3006
+12862
+12862
+15646
+25484
+0
+END GAME
+2018-07-02
+PvT
+(2)Benzene.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+4318
+3806
+0
+0
+2398
+0
+9406
+0
+10511
+80
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+4926
+3806
+0
+0
+3262
+0
+7326
+0
+14541
+0
+END GAME
+2018-07-02
+PvT
+(4)Empire of the Sun.scm
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+0
+0
+4670
+5342
+0
+0
+3934
+0
+0
+0
+9798
+0
+END GAME
+2018-07-02
+PvT
+(4)Roadrunner.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+5534
+3710
+0
+0
+3006
+0
+7294
+0
+15285
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+5214
+3966
+0
+0
+3326
+0
+7422
+0
+16308
+0
+END GAME
+2018-07-02
+PvT
+(3)Tau Cross.scx
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+0
+0
+2878
+5534
+0
+0
+3326
+0
+7678
+0
+17889
+0
+END GAME
+2018-07-02
+PvT
+(2)Heartbreak Ridge.scx
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+0
+0
+2974
+5694
+0
+0
+2270
+0
+7678
+0
+18075
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+5854
+3742
+12190
+20190
+3006
+12190
+11102
+15454
+37109
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+4222
+6398
+0
+0
+2654
+0
+0
+0
+11379
+80
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+0
+3934
+0
+0
+3326
+0
+0
+0
+10077
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+4222
+6398
+0
+0
+2654
+0
+0
+0
+9705
+80
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+0
+0
+5054
+3902
+0
+0
+3902
+0
+8926
+0
+12867
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+0
+0
+3902
+4414
+0
+0
+4414
+0
+7870
+0
+11069
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Unknown
+0
+0
+0
+5022
+3902
+23198
+25438
+3902
+23198
+8798
+27070
+30637
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1085
+0
+5118
+3998
+0
+0
+3326
+0
+0
+0
+9984
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+1128
+0
+5598
+3902
+0
+0
+3902
+0
+7262
+0
+17951
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+1128
+0
+5502
+3902
+0
+0
+3902
+0
+7262
+0
+17021
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1125
+1
+4094
+4158
+0
+0
+2846
+0
+0
+0
+11224
+112
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+1098
+0
+3902
+4414
+0
+0
+4414
+0
+7294
+0
+16742
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1085
+1
+6814
+3838
+0
+0
+2238
+0
+9054
+0
+12526
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+1125
+0
+3998
+3902
+0
+0
+3902
+0
+0
+0
+9643
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1128
+1
+3934
+5086
+0
+0
+5086
+0
+0
+0
+10635
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+1128
+0
+5054
+3902
+0
+0
+3902
+0
+0
+0
+9612
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+1125
+0
+3966
+3902
+13182
+0
+3902
+13182
+12542
+16958
+21919
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1128
+1
+3934
+5854
+0
+0
+5854
+0
+0
+0
+11472
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1118
+1
+4222
+6142
+0
+0
+2590
+0
+0
+0
+11441
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1128
+0
+0
+4062
+0
+0
+2974
+0
+0
+0
+9767
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+1125
+0
+3966
+3902
+0
+0
+3902
+0
+0
+0
+9581
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1085
+1
+0
+3902
+0
+0
+2238
+0
+8734
+0
+11689
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+1128
+0
+5054
+3902
+0
+0
+3902
+0
+0
+0
+9767
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1128
+1
+4030
+6014
+0
+0
+2174
+0
+0
+0
+14634
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+1125
+0
+4030
+3902
+0
+0
+3902
+0
+0
+0
+11131
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Unknown
+0
+1098
+0
+3902
+4414
+12926
+20062
+4414
+12926
+11070
+16222
+33877
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+1141
+0
+5726
+4222
+0
+0
+4190
+0
+0
+0
+11627
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1125
+1
+3966
+4382
+0
+0
+2526
+0
+0
+0
+9643
+112
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1125
+1
+4094
+4286
+0
+0
+2526
+0
+0
+0
+11875
+112
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+1128
+0
+4990
+3902
+0
+0
+3902
+0
+9214
+0
+12774
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1128
+0
+0
+4062
+0
+0
+2974
+0
+0
+0
+12991
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+1125
+0
+4062
+3902
+0
+0
+3902
+0
+0
+0
+11658
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1085
+0
+10718
+3742
+13470
+0
+3390
+13470
+11966
+16638
+24275
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1128
+0
+13950
+4062
+15134
+0
+2974
+15134
+12126
+17854
+27251
+0
+END GAME
+2018-07-02
+PvT
+(2)Heartbreak Ridge.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1163
+1
+2910
+4158
+0
+0
+2366
+0
+0
+0
+11100
+112
+END GAME
+2018-07-02
+PvT
+(4)Roadrunner.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+0
+1132
+0
+3934
+3614
+10718
+19166
+3230
+12094
+11870
+13630
+35797
+0
+END GAME
+2018-07-02
+PvT
+(4)Empire of the Sun.scm
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1137
+1
+3774
+4190
+0
+0
+2590
+0
+9246
+0
+11038
+80
+END GAME
+2018-07-02
+PvT
+(3)Neo Moon Glaive.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1150
+0
+5054
+3774
+12798
+12030
+2878
+12798
+12030
+13438
+18106
+0
+END GAME
+2018-07-02
+PvT
+(4)Circuit Breaker.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1118
+0
+4190
+3902
+0
+0
+3902
+0
+0
+0
+11658
+0
+END GAME
+2018-07-02
+PvT
+(2)Benzene.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1125
+0
+4446
+5502
+14558
+14078
+2398
+14558
+11998
+14110
+25050
+0
+END GAME
+2018-07-02
+PvT
+(4)Roadrunner.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+0
+1143
+0
+3998
+3678
+0
+0
+3070
+0
+7358
+0
+18637
+0
+END GAME
+2018-07-02
+PvT
+(4)Fighting Spirit.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1122
+0
+5374
+4382
+0
+15454
+4382
+0
+7422
+0
+19625
+0
+END GAME
+2018-07-02
+PvT
+(3)Neo Moon Glaive.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1117
+1
+3998
+3966
+0
+0
+2174
+0
+0
+0
+11348
+112
+END GAME
+2018-07-02
+PvT
+(4)Roadrunner.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1189
+0
+6270
+4190
+0
+19806
+3134
+0
+8094
+0
+21671
+0
+END GAME
+2018-07-02
+PvT
+(2)Destination.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1127
+1
+4062
+3870
+0
+0
+2110
+0
+9022
+0
+11782
+112
+END GAME
+2018-07-02
+PvT
+(4)Roadrunner.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1226
+1
+3870
+3646
+0
+0
+2238
+0
+0
+0
+11627
+0
+END GAME
+2018-07-02
+PvT
+(4)Jade.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1141
+0
+6462
+3934
+0
+0
+3070
+0
+8702
+0
+19532
+0
+END GAME
+2018-07-02
+PvT
+(2)Destination.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1127
+1
+4062
+3902
+0
+0
+2110
+0
+0
+0
+9984
+112
+END GAME
+2018-07-02
+PvT
+(4)Andromeda.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1117
+1
+5086
+5118
+20862
+8990
+2110
+23102
+8990
+14782
+25174
+0
+END GAME
+2018-07-02
+PvT
+(4)Electric Circuit.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1151
+1
+3966
+3934
+0
+0
+3934
+0
+0
+0
+16029
+112
+END GAME
+2018-07-02
+PvT
+(4)Roadrunner.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1189
+0
+5822
+3614
+0
+14430
+3134
+0
+7774
+0
+19997
+0
+END GAME
+2018-07-02
+PvT
+(2)Benzene.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1131
+0
+4382
+5374
+13886
+0
+2462
+13886
+13374
+17278
+21361
+0
+END GAME
+2018-07-02
+PvT
+(3)Tau Cross.scx
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+1141
+0
+2878
+5662
+0
+0
+3326
+0
+0
+0
+12092
+0
+END GAME
+2018-07-02
+PvT
+(3)Tau Cross.scx
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+1133
+0
+2814
+6014
+0
+0
+3326
+0
+0
+0
+11534
+0
+END GAME
+2018-07-02
+PvT
+(4)Circuit Breaker.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1132
+0
+5598
+3742
+0
+0
+3230
+0
+7774
+0
+11751
+0
+END GAME
+2018-07-02
+PvT
+(2)Benzene.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1131
+0
+4382
+3934
+0
+0
+2462
+0
+7614
+0
+18602
+0
+END GAME
+2018-07-02
+PvT
+(4)Fighting Spirit.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1117
+0
+0
+5726
+0
+0
+2878
+0
+8894
+0
+12588
+0
+END GAME
+2018-07-02
+PvT
+(4)Andromeda.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1135
+1
+3870
+4734
+0
+0
+2078
+0
+9438
+0
+11131
+112
+END GAME
+2018-07-02
+PvT
+(3)Neo Moon Glaive.scx
+10-15GateGoon
+Not fast rush
+Unknown
+1
+1882
+0
+3902
+3838
+0
+0
+3838
+0
+0
+0
+11782
+0
+END GAME
+2018-07-02
+PvT
+(4)Andromeda.scx
+DTDrop
+Not fast rush
+Not fast rush
+1
+1143
+0
+11934
+5918
+12030
+0
+2302
+13438
+11902
+0
+18788
+0
+END GAME
+2018-07-02
+PvT
+(4)Electric Circuit.scx
+DTDrop
+Not fast rush
+Not fast rush
+1
+1130
+1
+4318
+6782
+0
+0
+2622
+0
+0
+0
+11813
+80
+END GAME
+2018-07-02
+PvT
+(3)Tau Cross.scx
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+1122
+0
+3998
+5598
+0
+0
+2206
+0
+7774
+0
+19749
+0
+END GAME
+2018-07-02
+PvT
+(4)Empire of the Sun.scm
+10-15GateGoon
+Not fast rush
+Unknown
+1
+1806
+0
+4798
+5310
+0
+0
+3518
+0
+0
+0
+10759
+0
+END GAME
+2018-07-02
+PvT
+(2)Heartbreak Ridge.scx
+10-15GateGoon
+Not fast rush
+Unknown
+1
+1819
+0
+2846
+5566
+0
+0
+2814
+0
+0
+0
+10790
+0
+END GAME
+2018-07-02
+PvT
+(4)Icarus.scm
+DTDrop
+Not fast rush
+Not fast rush
+1
+1125
+1
+4126
+4094
+0
+0
+2814
+0
+0
+0
+11813
+112
+END GAME
+2018-07-02
+PvT
+(2)Benzene.scx
+DTDrop
+Not fast rush
+Not fast rush
+1
+1125
+0
+4414
+3774
+11390
+11294
+2398
+11390
+11198
+12254
+19315
+0
+END GAME
+2018-07-02
+PvT
+(4)Empire of the Sun.scm
+10-15GateGoon
+Not fast rush
+Not fast rush
+1
+1781
+0
+4638
+5886
+0
+0
+4606
+0
+0
+0
+9178
+0
+END GAME
+2018-07-02
+PvT
+(4)Electric Circuit.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1130
+0
+6302
+4414
+0
+0
+4382
+0
+9598
+0
+12681
+0
+END GAME
+2018-07-02
+PvT
+(4)Circuit Breaker.scx
+DTDrop
+Not fast rush
+Not fast rush
+1
+1132
+1
+3966
+3934
+0
+0
+2206
+0
+9630
+0
+11534
+112
+END GAME
+2018-07-02
+PvT
+(2)Destination.scx
+DTDrop
+Not fast rush
+Not fast rush
+1
+1127
+1
+4094
+3806
+0
+0
+2174
+0
+0
+0
+12123
+80
+END GAME
+2018-07-02
+PvT
+(2)Heartbreak Ridge.scx
+DTDrop
+Not fast rush
+Unknown
+1
+1147
+0
+2878
+5630
+12030
+11454
+2174
+0
+8542
+0
+15967
+0
+END GAME
+2018-07-02
+PvT
+(2)Destination.scx
+DTDrop
+Not fast rush
+Not fast rush
+1
+1127
+1
+4126
+3902
+0
+0
+2430
+0
+0
+0
+11999
+80
+END GAME
+2018-07-02
+PvT
+(4)La Mancha1.1.scx
+DTDrop
+Not fast rush
+Not fast rush
+1
+1118
+1
+3966
+6878
+0
+0
+2462
+0
+0
+0
+11069
+112
+END GAME
+2018-07-02
+PvT
+(4)Circuit Breaker.scx
+DTDrop
+Not fast rush
+Not fast rush
+1
+1114
+0
+6206
+4382
+10910
+11006
+4382
+10910
+9406
+0
+15037
+0
+END GAME
+2018-07-02
+PvT
+(4)CircuitBreaker.scx
+DTDrop
+Not fast rush
+Not fast rush
+1
+1119
+1
+3902
+3870
+0
+0
+2270
+0
+0
+0
+12123
+112
+END GAME
+2018-07-02
+PvT
+(4)Jade.scx
+DTDrop
+Not fast rush
+Not fast rush
+1
+1130
+1
+2782
+6750
+0
+0
+6750
+0
+11198
+0
+12061
+112
+END GAME
+2018-07-02
+PvT
+(2)Destination.scx
+DTDrop
+Not fast rush
+Not fast rush
+1
+1157
+1
+4062
+3838
+0
+0
+2142
+0
+0
+0
+12774
+112
+END GAME
+2018-07-02
+PvT
+(4)Python.scx
+DTDrop
+Not fast rush
+Not fast rush
+1
+1132
+1
+3870
+4222
+0
+0
+2366
+0
+0
+0
+9705
+112
+END GAME
+2018-07-02
+PvT
+(3)TauCross.scx
+DTDrop
+Not fast rush
+Unknown
+1
+1128
+0
+4030
+5502
+11870
+10942
+2206
+0
+7934
+0
+14262
+0
+END GAME
+2018-07-02
+PvT
+(2)Destination.scx
+DTDrop
+Not fast rush
+Not fast rush
+1
+1142
+1
+4062
+3870
+0
+0
+2110
+0
+0
+0
+12340
+112
+END GAME
+2018-07-02
+PvT
+(4)Jade.scx
+DTDrop
+Not fast rush
+Unknown
+1
+1136
+0
+3870
+5406
+10718
+0
+3070
+0
+7486
+0
+12929
+0
+END GAME
+2018-07-02
+PvT
+(3)TauCross.scx
+DTDrop
+Not fast rush
+Not fast rush
+1
+1141
+1
+4062
+3710
+11006
+11198
+2238
+11070
+11198
+0
+17393
+0
+END GAME
+2018-07-02
+PvT
+(4)Jade.scx
+DTDrop
+Not fast rush
+Unknown
+1
+1138
+0
+2750
+4254
+10910
+10302
+4254
+0
+7358
+0
+14200
+0
+END GAME
+2018-07-02
+PvT
+(4)Roadrunner.scx
+DTDrop
+Not fast rush
+Not fast rush
+1
+1123
+0
+3934
+5918
+10590
+0
+3038
+11422
+11422
+0
+18912
+0
+END GAME
+2018-07-02
+PvT
+(3)TauCross.scx
+DTDrop
+Not fast rush
+Unknown
+1
+1143
+0
+2878
+5534
+0
+10878
+3294
+0
+8446
+0
+14386
+0
+END GAME
+2018-07-02
+PvT
+(3)NeoMoonGlaive.scx
+DTDrop
+Not fast rush
+Not fast rush
+1
+1131
+0
+4062
+4094
+0
+10878
+2846
+0
+7678
+0
+15037
+0
+END GAME
+2018-07-02
+PvT
+(4)FightingSpirit.scx
+DTDrop
+Not fast rush
+Unknown
+1
+1128
+0
+6558
+4254
+11806
+0
+4254
+0
+9022
+0
+14665
+0
+END GAME
+2018-07-02
+PvT
+(3)TauCross.scx
+DTDrop
+Not fast rush
+Unknown
+1
+1133
+0
+2814
+6110
+0
+10846
+3326
+0
+10014
+0
+14820
+0
+END GAME
+2018-07-02
+PvT
+(3)TauCross.scx
+DTDrop
+Not fast rush
+Unknown
+1
+1143
+0
+2910
+5630
+10846
+0
+3294
+11358
+12414
+11806
+16835
+0
+END GAME
+2018-07-02
+PvT
+(4)FightingSpirit.scx
+DTDrop
+Not fast rush
+Unknown
+1
+1128
+0
+5342
+4382
+11486
+10110
+4382
+0
+8094
+0
+14727
+0
+END GAME
+2018-07-02
+PvT
+(4)Andromeda.scx
+DTDrop
+Not fast rush
+Unknown
+1
+1177
+0
+4030
+5502
+12190
+9502
+3390
+0
+7326
+0
+15967
+0
+END GAME
+2018-07-02
+PvT
+(4)Roadrunner.scx
+DTDrop
+Not fast rush
+Not fast rush
+1
+1128
+1
+4030
+3614
+0
+0
+2206
+0
+0
+0
+13704
+112
+END GAME
+2018-07-02
+PvT
+(4)LaMancha1.1.scx
+DTDrop
+Not fast rush
+Not fast rush
+0
+1118
+0
+3838
+3710
+10686
+0
+3262
+11486
+7422
+0
+20090
+0
+END GAME
+2018-07-02
+PvT
+(4)Andromeda.scx
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+1131
+0
+6142
+4254
+0
+0
+4254
+0
+8862
+0
+11689
+0
+END GAME
+2018-07-02
+PvT
+(4)Jade.scx
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+1167
+0
+3934
+5886
+0
+0
+4158
+0
+12510
+0
+15905
+0
+END GAME
+2018-07-02
+PvT
+(4)LaMancha1.1.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1127
+1
+4094
+4062
+0
+0
+2206
+0
+0
+0
+10480
+112
+END GAME
+2018-07-02
+PvT
+(3)NeoMoonGlaive.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1132
+0
+4062
+5054
+0
+0
+2846
+0
+7326
+0
+26321
+0
+END GAME
+2018-07-02
+PvT
+(3)NeoMoonGlaive.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+1159
+0
+4958
+3806
+0
+0
+2878
+0
+7806
+0
+12371
+0
+END GAME
+2018-07-02
+PvT
+(3)TauCross.scx
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+1128
+0
+4030
+6078
+18046
+0
+2206
+0
+13278
+0
+20245
+0
+END GAME
+2018-07-02
+PvT
+(4)Python.scx
+10Gate25NexusFE
+Not fast rush
+Unknown
+0
+1145
+0
+4414
+3870
+15262
+20126
+3870
+15262
+11390
+17598
+49837
+0
+END GAME
+2018-07-02
+PvT
+(2)HeartbreakRidge.scx
+10-15GateGoon
+Not fast rush
+Unknown
+0
+1822
+0
+2942
+6078
+14430
+17790
+2814
+14430
+12062
+17854
+34846
+0
+END GAME
+2018-07-02
+PvT
+(4)Jade.scx
+10Gate25NexusFE
+Not fast rush
+Unknown
+1
+0
+0
+4830
+5374
+13790
+0
+2974
+17438
+12574
+18750
+19377
+0
+END GAME
+2018-07-02
+PvT
+(4)Jade.scx
+10Gate25NexusFE
+Not fast rush
+Not fast rush
+1
+0
+0
+3870
+0
+0
+0
+0
+0
+0
+0
+10108
+0
+END GAME
+2018-07-02
+PvT
+(3)Neo Moon Glaive.scx
+10Gate25NexusFE
+Unknown
+Wall-in
+1
+0
+0
+3902
+7134
+0
+0
+2206
+0
+8862
+0
+10914
+80
+END GAME
+2018-07-02
+PvT
+(3)Aztec.scx
+Proxy4GateGoon
+Not fast rush
+Not fast rush
+1
+0
+0
+3774
+6142
+0
+0
+6142
+0
+0
+0
+12681
+0
+END GAME
+2018-07-02
+PvT
+(2)Benzene.scx
+10Gate25NexusFE
+Wall-in
+Wall-in
+1
+0
+0
+4286
+7806
+0
+0
+2430
+0
+8670
+0
+13239
+80
+END GAME
+2018-07-02
+PvT
+(3)TauCross.scx
+10Gate25NexusFE
+Not fast rush
+Wall-in
+1
+0
+0
+2878
+6206
+0
+0
+3294
+0
+7902
+0
+12154
+0
+END GAME
+2018-07-02
+PvT
+(4)Fortress.scx
+10Gate25NexusFE
+Not fast rush
+Wall-in
+1
+0
+0
+5918
+5694
+0
+0
+2590
+0
+0
+0
+11720
+0
+END GAME
+2018-07-02
+PvT
+(3)Aztec.scx
+10Gate25NexusFE
+Not fast rush
+Wall-in
+1
+0
+0
+3870
+6398
+14238
+0
+3198
+14238
+14910
+12734
+22229
+0
+END GAME
+2018-07-02
+PvT
+(2)Destination.scx
+10Gate25NexusFE
+Not fast rush
+Wall-in
+1
+0
+0
+4030
+6462
+0
+0
+2174
+0
+0
+0
+11379
+112
+END GAME
+2018-07-02
+PvT
+(2)Benzene.scx
+10Gate25NexusFE
+Not fast rush
+Wall-in
+1
+0
+0
+4318
+7102
+0
+0
+2398
+0
+0
+0
+12247
+80
+END GAME
+2018-07-02
+PvT
+(2)Benzene.scx
+10Gate25NexusFE
+Not fast rush
+Wall-in
+1
+0
+0
+4318
+7518
+0
+0
+2430
+0
+9470
+0
+10821
+80
+END GAME
+2018-07-02
+PvT
+(2)Destination.scx
+10Gate25NexusFE
+Not fast rush
+Wall-in
+1
+0
+0
+4094
+7038
+0
+0
+2110
+0
+0
+0
+10666
+80
+END GAME
+2018-07-02
+PvT
+(3)TauCross.scx
+10Gate25NexusFE
+Not fast rush
+Wall-in
+1
+0
+0
+3998
+6302
+0
+0
+3294
+0
+0
+0
+11503
+0
+END GAME
+2018-07-02
+PvT
+(2)HeartbreakRidge.scx
+10Gate25NexusFE
+Not fast rush
+Wall-in
+0
+0
+0
+2846
+6078
+13950
+16030
+2174
+13950
+12542
+17502
+32077
+0
+END GAME
+2018-07-02
+PvT
+(2)Destination.scx
+DTDrop
+Wall-in
+Wall-in
+1
+0
+0
+4254
+6654
+0
+0
+2174
+0
+0
+0
+13053
+80
+END GAME
+2018-07-02
+PvT
+(4)Python.scx
+DTDrop
+Not fast rush
+Wall-in
+1
+0
+0
+2430
+6462
+12446
+11006
+3518
+12446
+10878
+12254
+17114
+0
+END GAME
+2018-07-02
+PvT
+(2)HeartbreakRidge.scx
+DTDrop
+Not fast rush
+Wall-in
+1
+0
+0
+2878
+6494
+11454
+11582
+2238
+11454
+11582
+12190
+21795
+0
+END GAME
+2018-07-02
+PvT
+(4)Andromeda.scx
+DTDrop
+Not fast rush
+Wall-in
+1
+0
+0
+5118
+4286
+0
+0
+4286
+0
+0
+0
+14324
+0
+END GAME
+2018-07-02
+PvT
+(2)Destination.scx
+DTDrop
+Not fast rush
+Wall-in
+1
+0
+0
+4222
+6878
+0
+0
+2622
+0
+0
+0
+12309
+80
+END GAME
+2018-07-02
+PvT
+(3)Aztec.scx
+DTDrop
+Not fast rush
+Wall-in
+1
+0
+0
+2718
+7102
+11518
+11038
+2302
+11518
+11038
+0
+17424
+0
+END GAME
+2018-07-02
+PvT
+(4)Andromeda.scx
+DTDrop
+Not fast rush
+Wall-in
+1
+0
+0
+3774
+4286
+0
+0
+4286
+0
+11838
+0
+15347
+0
+END GAME
+2018-07-02
+PvT
+(3)Aztec.scx
+DTDrop
+Not fast rush
+Wall-in
+1
+0
+0
+3774
+6110
+0
+10974
+2174
+0
+10974
+0
+13239
+0
+END GAME
+2018-07-02
+PvT
+(4)CircuitBreaker.scx
+DTDrop
+Not fast rush
+Not fast rush
+1
+0
+0
+3678
+9150
+0
+0
+2206
+0
+0
+0
+12495
+80
+END GAME
+2018-07-02
+PvT
+(4)EmpireoftheSun.scm
+DTDrop
+Wall-in
+Wall-in
+1
+0
+0
+2558
+6334
+12446
+10782
+3102
+12446
+10782
+12254
+16587
+0
+END GAME
+2018-07-02
+PvT
+(2)HeartbreakRidge.scx
+DTDrop
+Not fast rush
+Wall-in
+0
+0
+0
+2878
+6398
+13918
+11454
+2270
+13918
+11454
+11550
+33296
+0
+END GAME
+2018-07-02
+PvT
+(3)Aztec.scx
+DTDrop
+Wall-in
+Not fast rush
+1
+0
+0
+5054
+6718
+11358
+0
+3102
+11358
+11998
+0
+17641
+0
+END GAME
+2018-07-02
+PvT
+(4)Python.scx
+DTDrop
+Wall-in
+Wall-in
+1
+0
+0
+2430
+6526
+13854
+10590
+2878
+13854
+10590
+0
+17920
+0
+END GAME
+2018-07-02
+PvT
+(4)EmpireoftheSun.scm
+DTDrop
+Not fast rush
+Wall-in
+1
+0
+0
+2558
+5950
+15486
+0
+4286
+15486
+12158
+13694
+22167
+0
+END GAME
+2018-07-02
+PvT
+(4)EmpireoftheSun.scm
+DTDrop
+Not fast rush
+Wall-in
+1
+0
+0
+3742
+5886
+12254
+14462
+3774
+12254
+10846
+0
+17207
+0
+END GAME
+2018-07-02
+PvT
+(4)CircuitBreaker.scx
+DTDrop
+Not fast rush
+Not fast rush
+1
+0
+0
+4158
+6398
+12478
+12574
+4414
+12478
+11070
+0
+18571
+0
+END GAME
+2018-07-02
+PvT
+(4)Fortress.scx
+DTDrop
+Wall-in
+Wall-in
+1
+0
+0
+3550
+4254
+11070
+10750
+3422
+11070
+10430
+11838
+16711
+0
+END GAME
+2018-07-02
+PvT
+(4)Python.scx
+DTDrop
+Not fast rush
+Wall-in
+1
+0
+0
+3390
+6270
+11038
+11998
+3486
+11038
+11582
+11198
+18788
+0
+END GAME
+2018-07-02
+PvT
+(2)Benzene.scx
+DTDrop
+Not fast rush
+Wall-in
+1
+0
+0
+4254
+6750
+0
+12350
+2398
+0
+8734
+0
+16060
+80
+END GAME
+2018-07-02
+PvT
+(4)CircuitBreaker.scx
+DTDrop
+Not fast rush
+Not fast rush
+1
+0
+0
+2942
+6686
+18014
+10718
+3230
+18014
+10718
+0
+19594
+0
+END GAME
+2018-07-02
+PvT
+(2)Benzene.scx
+DTDrop
+Wall-in
+Not fast rush
+1
+0
+0
+4254
+6366
+11550
+11390
+2430
+11550
+11358
+0
+18013
+0
+END GAME
+2018-07-02
+PvT
+(3)TauCross.scx
+DTDrop
+Wall-in
+Wall-in
+1
+0
+0
+5086
+6878
+0
+0
+3326
+0
+0
+0
+11999
+0
+END GAME

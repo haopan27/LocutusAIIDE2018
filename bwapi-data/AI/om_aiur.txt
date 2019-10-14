@@ -1,0 +1,1020 @@
+2018-07-02
+PvP
+(4)Icarus.scm
+12Nexus5ZealotFE
+Naked expand
+Naked expand
+1
+0
+0
+3710
+5662
+13086
+13182
+6494
+13086
+13182
+13086
+15068
+0
+END GAME
+2018-07-02
+PvP
+(2)Heartbreak Ridge.scx
+Turtle
+Naked expand
+Unknown
+1
+0
+0
+7774
+4350
+4638
+17662
+3326
+10782
+17662
+10782
+27127
+0
+END GAME
+2018-07-02
+PvP
+(4)Icarus.scm
+10-15GateGoon
+Naked expand
+Heavy rush
+1
+0
+0
+1918
+3742
+11454
+7262
+4766
+7582
+7262
+11454
+18013
+0
+END GAME
+2018-07-02
+PvP
+(3)Tau Cross.scx
+10-15GateGoon
+Naked expand
+Unknown
+1
+0
+0
+2046
+7326
+14174
+15102
+3454
+4510
+15102
+14174
+21485
+0
+END GAME
+2018-07-02
+PvP
+(4)Python.scx
+10-15GateGoon
+Naked expand
+Heavy rush
+0
+0
+0
+830
+5150
+0
+3006
+0
+0
+3006
+0
+10477
+0
+END GAME
+2018-07-02
+PvP
+(3)Neo Moon Glaive.scx
+12Nexus5ZealotFE
+Naked expand
+Unknown
+1
+0
+0
+7742
+4286
+4894
+16510
+3326
+9534
+16510
+9534
+18478
+0
+END GAME
+2018-07-02
+PvP
+(2)Benzene.scx
+12Nexus5ZealotFE
+Naked expand
+Unknown
+1
+0
+0
+2334
+7230
+8414
+9182
+3550
+4510
+9182
+10046
+18044
+0
+END GAME
+2018-07-02
+PvP
+(4)Circuit Breaker.scx
+Turtle
+Naked expand
+Naked expand
+0
+0
+0
+1758
+5406
+12958
+0
+11902
+12958
+0
+12958
+17889
+0
+END GAME
+2018-07-02
+PvP
+(3)Neo Moon Glaive.scx
+12Nexus5ZealotFE
+Naked expand
+Naked expand
+1
+0
+0
+1982
+5662
+11966
+15998
+4798
+11966
+15998
+11966
+17827
+0
+END GAME
+2018-07-02
+PvP
+(4)Andromeda.scx
+12Nexus5ZealotFE
+Naked expand
+Unknown
+1
+0
+0
+2814
+7486
+0
+0
+4382
+4766
+0
+0
+8279
+0
+END GAME
+2018-07-02
+PvP
+(4)Icarus.scm
+4GateGoon
+Naked expand
+Heavy rush
+1
+0
+0
+1950
+3550
+11134
+10526
+5598
+0
+10526
+0
+13177
+16
+END GAME
+2018-07-02
+PvP
+(4)Andromeda.scx
+4GateGoon
+Naked expand
+Not fast rush
+1
+0
+0
+2910
+7262
+8894
+9950
+3422
+7262
+9950
+10366
+23841
+0
+END GAME
+2018-07-02
+PvP
+(3)TauCross.scx
+4GateGoon
+Naked expand
+Heavy rush
+1
+0
+0
+1950
+3742
+0
+10814
+4894
+0
+10814
+0
+13022
+0
+END GAME
+2018-07-02
+PvP
+(4)CircuitBreaker.scx
+Turtle
+Heavy rush
+Not fast rush
+1
+0
+0
+1726
+5406
+0
+17310
+9854
+13822
+17310
+11614
+18044
+0
+END GAME
+2018-07-02
+PvP
+(4)Python.scx
+4GateGoon
+Heavy rush
+Not fast rush
+1
+0
+0
+2494
+9470
+0
+0
+9470
+0
+0
+0
+11906
+0
+END GAME
+2018-07-02
+PvP
+(3)TauCross.scx
+Proxy4GateGoon
+Not fast rush
+Proxy
+1
+0
+0
+1182
+10430
+0
+0
+0
+0
+0
+0
+11720
+0
+END GAME
+2018-07-02
+PvP
+(4)Python.scx
+Proxy9-9Gate
+Not fast rush
+Not fast rush
+1
+0
+0
+3390
+4094
+0
+0
+5758
+0
+0
+0
+9209
+0
+END GAME
+2018-07-02
+PvP
+(2)Benzene.scx
+2GateDTRush
+Not fast rush
+Dark templar
+1
+0
+0
+2238
+7454
+0
+0
+3518
+7454
+0
+0
+13611
+0
+END GAME
+2018-07-02
+PvP
+(3)Aztec.scx
+4GateGoon
+Not fast rush
+Not fast rush
+1
+0
+0
+1982
+5438
+0
+9694
+9726
+0
+9694
+0
+12278
+0
+END GAME
+2018-07-02
+PvP
+(3)Aztec.scx
+2GateDTRush
+Not fast rush
+Heavy rush
+1
+0
+0
+1950
+3710
+0
+0
+5502
+0
+0
+0
+11720
+0
+END GAME
+2018-07-02
+PvP
+(3)TauCross.scx
+Proxy9-9Gate
+Not fast rush
+Not fast rush
+1
+0
+0
+0
+4382
+12062
+0
+12030
+0
+0
+0
+14479
+0
+END GAME
+2018-07-02
+PvP
+(4)CircuitBreaker.scx
+ProxyHeavyZealotRush
+Not fast rush
+Dark templar
+1
+0
+0
+1982
+8062
+0
+0
+9278
+8062
+0
+0
+12371
+0
+END GAME
+2018-07-02
+PvP
+(4)Fortress.scx
+2GateDTExpo
+Not fast rush
+Heavy rush
+1
+0
+0
+1790
+3870
+0
+9790
+5342
+0
+9790
+11614
+14634
+0
+END GAME
+2018-07-02
+PvP
+(3)TauCross.scx
+Turtle
+Heavy rush
+Dark templar
+1
+0
+0
+3102
+8062
+0
+9086
+3486
+8062
+9086
+11678
+15905
+0
+END GAME
+2018-07-02
+PvP
+(2)HeartbreakRidge.scx
+4GateGoon
+Dark templar
+Heavy rush
+1
+0
+0
+1982
+3806
+0
+11454
+4734
+0
+11454
+11934
+14417
+0
+END GAME
+2018-07-02
+PvP
+(2)Destination.scx
+4GateGoon
+Heavy rush
+Not fast rush
+1
+0
+0
+0
+3934
+0
+0
+3294
+0
+0
+0
+5334
+0
+END GAME
+2018-07-02
+PvP
+(2)Destination.scx
+ProxyHeavyZealotRush2p
+Not fast rush
+Unknown
+1
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+5303
+0
+END GAME
+2018-07-02
+PvP
+(4)Andromeda.scx
+4GateGoon
+Not fast rush
+Heavy rush
+1
+0
+0
+1854
+4702
+0
+0
+0
+0
+0
+0
+10666
+0
+END GAME
+2018-07-02
+PvP
+(2)HeartbreakRidge.scx
+4GateGoon
+Heavy rush
+Heavy rush
+1
+0
+0
+2526
+4702
+0
+0
+0
+0
+0
+0
+11038
+0
+END GAME
+2018-07-02
+PvP
+(2)HeartbreakRidge.scx
+Turtle
+Heavy rush
+Not fast rush
+1
+0
+0
+1982
+5502
+0
+17246
+6750
+13598
+17246
+12126
+25887
+0
+END GAME
+2018-07-02
+PvP
+(2)HeartbreakRidge.scx
+4GateGoon
+Heavy rush
+Not fast rush
+1
+0
+0
+7550
+4318
+7550
+11134
+3294
+0
+11134
+9502
+13146
+0
+END GAME
+2018-07-02
+PvP
+(2)Destination.scx
+Proxy4GateGoon
+Not fast rush
+Not fast rush
+1
+0
+0
+2078
+10142
+0
+10718
+11230
+0
+10718
+12702
+14603
+0
+END GAME
+2018-07-02
+PvP
+(2)HeartbreakRidge.scx
+Proxy9-9Gate
+Not fast rush
+Not fast rush
+1
+0
+0
+2014
+0
+0
+0
+4734
+0
+0
+0
+9643
+0
+END GAME
+2018-07-02
+PvP
+(3)Aztec.scx
+2GateDTRush
+Not fast rush
+Heavy rush
+1
+0
+0
+3166
+3998
+0
+0
+8030
+0
+0
+0
+11472
+0
+END GAME
+2018-07-02
+PvP
+(3)TauCross.scx
+Proxy9-9Gate
+Not fast rush
+Not fast rush
+1
+0
+0
+3070
+8254
+0
+0
+4958
+0
+0
+0
+9612
+0
+END GAME
+2018-07-02
+PvP
+(4)Fortress.scx
+ProxyHeavyZealotRush
+Not fast rush
+Not fast rush
+1
+0
+0
+2558
+7422
+7422
+0
+8382
+0
+0
+9502
+12402
+0
+END GAME
+2018-07-02
+PvP
+(3)TauCross.scx
+Proxy4GateGoon
+Not fast rush
+Not fast rush
+1
+0
+0
+2046
+10238
+0
+10910
+10270
+0
+10910
+11742
+13890
+0
+END GAME
+2018-07-02
+PvP
+(3)Aztec.scx
+ProxyHeavyZealotRush
+Not fast rush
+Not fast rush
+1
+0
+0
+1950
+8766
+0
+13022
+8798
+0
+13022
+0
+16122
+0
+END GAME
+2018-07-02
+PvP
+(3)TauCross.scx
+Proxy9-9Gate
+Not fast rush
+Not fast rush
+1
+0
+0
+2398
+4734
+0
+0
+0
+0
+0
+0
+8248
+0
+END GAME
+2018-07-02
+PvP
+(2)Destination.scx
+4GateGoon
+Not fast rush
+Not fast rush
+1
+0
+0
+0
+4062
+0
+7486
+5022
+0
+7486
+0
+11875
+0
+END GAME
+2018-07-02
+PvP
+(3)Aztec.scx
+4GateGoon
+Not fast rush
+Heavy rush
+1
+0
+0
+1918
+3742
+0
+0
+5438
+0
+0
+0
+12619
+0
+END GAME
+2018-07-02
+PvP
+(2)Destination.scx
+4GateGoon
+Not fast rush
+Not fast rush
+1
+0
+0
+0
+3934
+0
+0
+3294
+0
+0
+0
+5303
+0
+END GAME
+2018-07-02
+PvP
+(2)Destination.scx
+4GateGoon
+Not fast rush
+Dark templar
+1
+0
+0
+5630
+7390
+0
+9438
+3422
+7390
+9438
+0
+17145
+0
+END GAME
+2018-07-02
+PvP
+(4)CircuitBreaker.scx
+4GateGoon
+Not fast rush
+Dark templar
+1
+0
+0
+3582
+7326
+0
+9950
+4414
+7326
+9950
+12766
+18168
+0
+END GAME
+2018-07-02
+PvP
+(2)Destination.scx
+4GateGoon
+Not fast rush
+Not fast rush
+1
+0
+0
+0
+5502
+0
+0
+9470
+0
+0
+0
+12092
+0
+END GAME
+2018-07-02
+PvP
+(3)Aztec.scx
+4GateGoon
+Not fast rush
+Dark templar
+1
+0
+0
+3038
+7486
+0
+14654
+3454
+7486
+14654
+12670
+17021
+0
+END GAME
+2018-07-02
+PvP
+(3)Aztec.scx
+4GateGoon
+Not fast rush
+Heavy rush
+1
+0
+0
+2974
+3710
+0
+10366
+5406
+0
+10366
+0
+13115
+0
+END GAME
+2018-07-02
+PvP
+(4)Fortress.scx
+4GateGoon
+Not fast rush
+Heavy rush
+1
+0
+0
+2910
+5054
+0
+0
+0
+0
+0
+0
+10418
+0
+END GAME
+2018-07-02
+PvP
+(2)Benzene.scx
+4GateGoon
+Heavy rush
+Heavy rush
+1
+0
+0
+2110
+4158
+0
+10814
+5310
+0
+10814
+12062
+14014
+0
+END GAME
+2018-07-02
+PvP
+(4)EmpireoftheSun.scm
+4GateGoon
+Heavy rush
+Heavy rush
+1
+0
+0
+2526
+4702
+0
+0
+0
+0
+0
+0
+10418
+0
+END GAME
+2018-07-02
+PvP
+(4)EmpireoftheSun.scm
+4GateGoon
+Not fast rush
+Dark templar
+1
+0
+0
+3678
+7262
+0
+14174
+3518
+7262
+14174
+11102
+16897
+0
+END GAME
